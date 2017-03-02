@@ -11,23 +11,28 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
         <link href="osd-css.css" rel="stylesheet">
+        <link href="osd-css-modals.css" rel="stylesheet">
+        <link href="osd-css-overlays.css" rel="stylesheet">
+        <link href="osd-css-printer-modules.css" rel="stylesheet">
     </head>
     <body>
         <div class="nav_bar" id="nav_bar"></div>
         <div class="octo_slack_modal" id="octo_slack_modal"></div>
         <div class="snapshot_modal" id="snapshot_modal"></div>
-        <div class="container" id="container"></div>
+        <div class = "shell">
+            <div class="container" id="container"></div>
+        </div><!--./shell-->
 
         <script>
-            var ultimaker = new printer("Ultimaker", "Ultimaker 2+", 1, true, "username", "password", "feed", "feed");
-            createPrinterModule(new printer("Black Mamba", "Rostock Max v2", 1, true, "username", "password", "feed", "feed"));
-            createPrinterModule(new printer("Moby Dick", "Rostock Max v2", 1, true, "username", "password", "feed", "feed"));
-            createPrinterModule(new printer("Printrbot", "PrintrBot Simple Metal", 1, false, "username", "password", "feed", "feed"));
-            createPrinterModule(new printer("Stu i3", "Wanhao Duplicator i3", 1, true, "username", "password", "feed", "feed"));
-            createPrinterModule(ultimaker);
-            createPrinterModule(new printer("Taz 1", "Tazbot v4", 1, true, "username", "password", "feed", "feed"));
-            createPrinterModule(new printer("Taz 2", "Tazbot v6", 1, true, "username", "password", "feed", "feed"));
-            createPrinterModule(new printer("Taz 3", "Tazbot v5", 1, true, "username", "password", "feed", "feed"));
+            createPrinterModule(new printer("Black Mamba", "Rostock Max v2", 1, true));
+            createPrinterModule(new printer("Moby Dick", "Rostock Max v2", 1, true));
+            createPrinterModule(new printer("Printrbot", "PrintrBot Simple Metal", 1, false));
+            var stu = new printer("Stu i3", "Wanhao Duplicator i3", 1, true);
+            createPrinterModule(stu);
+            createPrinterModule(new printer("Ultimaker", "Ultimaker 2+", 1, true));
+            // createPrinterModule(new printer("Taz 1", "Tazbot v4", 1, true, "username", "password", "feed", "feed"));
+            // createPrinterModule(new printer("Taz 2", "Tazbot v6", 1, true, "username", "password", "feed", "feed"));
+            // createPrinterModule(new printer("Taz 3", "Tazbot v5", 1, true, "username", "password", "feed", "feed"));
 
             createNavBar();
             createOctoSlackModal();
@@ -36,7 +41,7 @@
 
             $(document).ready(function(){
                 $("button").click(function(){
-                    ultimaker.batchInfo();
+                    stu.progress();
                 });
             });
 

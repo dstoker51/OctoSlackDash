@@ -1,3 +1,4 @@
+"use strict()";
 function createPrinterModule(printer) {
     // Create a new row if needed
     if (printerModuleCount % numModulesPerRow === 0) {
@@ -24,13 +25,14 @@ function createPrinterModule(printer) {
     if(printer !== undefined)    // Properly constucted printer object
         printerName.innerHTML = printer.name;
     else {
-        printerName.innerHTML = "OctoPi-" + printerModule.id; // Badly constructed still need a name
+        // Badly constructed printers still need a name
+        printerName.innerHTML = "OctoPi-" + printerModule.id;
     }
 
     var snapshot = document.createElement("IMG");
     snapshot.className = "snapshot";
     snapshot.id = "snapshot_" + Number(printerModule.id);
-    snapshot.src = "http://155.97.12.12" + Number(printerModule.id) + "/webcam/?action=snapshot";
+    snapshot.src = printer.octoprintWebcamSnapshotUrl;
     snapshot.alt = printerName.innerHTML;
     snapshot.onclick = function(){
         displaySnapshotModal(Number(printerModule.id));
@@ -38,7 +40,6 @@ function createPrinterModule(printer) {
     // snapshot.onerror = function() {
     //     snapshot.src = "img/offline.png";
     // };
-    // setUpSnapshotLiveFeedHover(snapshot);
 
     var toolbar = document.createElement("DIV");
     toolbar.className = "toolbar";
@@ -88,7 +89,4 @@ function createPrinterModule(printer) {
 
     // Display them
     document.getElementById("container").lastChild.appendChild(col);
-
-    // Set up status hover and overlay now that the elements exist in the dom
-    // setUpStatusHoverOverlay(status.id);
 }

@@ -10,34 +10,22 @@ function updateSnapshotViews(){
     }
 }
 
-function setUpSnapshotLiveFeedHover(snapshot) {
-    var timer;
-    var delay = 50;
-
-    $(snapshot).hover(function() {
-        // on mouse in, start a timeout
-        timer = setTimeout(function() {
-            switchToStream(snapshot);
-        }, delay);
-    }, function() {
-        // on mouse out, cancel the timer
-        clearTimeout(timer);
-        switchToSnapshot(snapshot);
-    });
-}
-
 function switchToStream(snapshot) {
     var id = Number(snapshot.id[snapshot.id.length-1]);
-    snapshot.src = "http://155.97.12.12" + id + "/webcam/?action=stream";
+    var printer = getPrinterById(id);
+    snapshot.src = printer.octoprintWebcamLiveUrl;
+    // snapshot.src = "http://155.97.12.12" + id + "/webcam/?action=stream";
 }
 
 function switchToSnapshot(snapshot) {
     var id = Number(snapshot.id[snapshot.id.length-1]);
     window.stop();  // This stops the stream so that it doesn't keep running in the background
-    snapshot.src = "http://155.97.12.12" + id + "/webcam/?action=snapshot";
+    var printer = getPrinterById(id);
+    snapshot.src = printer.octoprintWebcamSnapshotUrl;
+    // snapshot.src = "http://155.97.12.12" + id + "/webcam/?action=snapshot";
 }
 
-function setUpStatusHover() {
+function setUpStatusOverlay() {
     $(".status").hover(
         function() {
             var id = Number(this.parentNode.id);
@@ -50,7 +38,7 @@ function setUpStatusHover() {
     );
 }
 
-function setUpStatusHoverOverlay(id) {
+function createStatusOverlay(id) {
     var overlay_id = id.replace("status_", "");   // Get the number only
 
     // Create elements
@@ -157,7 +145,8 @@ function createSnapshotModal() {
 
 function displaySnapshotModal(printer_id) {
     var modalContent = document.getElementById("snapshot_modal_image");
-    modalContent.src = "http://155.97.12.12" + printer_id + "/webcam/?action=stream";
+    var printer = getPrinterById(printer_id);
+    modalContent.src = printer.octoprintWebcamLiveUrl;
 
     var snapshotModal = document.getElementById("snapshot_modal");
     snapshotModal.style.display = "block";
