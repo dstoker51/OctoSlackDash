@@ -1,24 +1,26 @@
-.status_overlay {
+.overlay {
     /* Height & width depends on how you want to reveal the overlay (see JS below) */
     height: 0;
     width: 100%;
-    position: relative; /* Stay in place */
+    position: absolute;
+    top: 0;
+    left: 0;
     z-index: 1; /* Sit on top */
     background-color: rgb(0,0,0); /* Black fallback color */
-    background-color: rgba(0,0,0, 0.5); /* Black w/opacity */
-    overflow-x: hidden; /* Disable horizontal scroll */
+    background-color: rgba(0,0,0, 0.9); /* Black w/opacity */
+    overflow-x: hidden;
     transition: 0.25s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
 }
 
 /* Position the content inside the overlay */
-.status_overlay-content {
+.info_overlay_content {
     position: relative;
     text-align: center; /* Centered text/links */
     margin-top: 30px; /* 30px top margin to avoid conflict with the close button on smaller screens */
 }
 
 /* The navigation links inside the overlay */
-.status_overlay a {
+.info_overlay_content a {
     padding: 8px;
     text-decoration: none;
     font-size: 36px;
@@ -28,6 +30,28 @@
 }
 
 /* When you mouse over the navigation links, change their color */
-.status_overlay a:hover, .status_overlay a:focus {
+.info_overlay_content a:hover, .info_overlay_content a:focus {
+    color: #f1f1f1;
+}
+
+/* Position the content inside the overlay */
+.settings_overlay_content {
+    position: relative;
+    text-align: center; /* Centered text/links */
+    margin-top: 30px; /* 30px top margin to avoid conflict with the close button on smaller screens */
+}
+
+/* The navigation links inside the overlay */
+.settings_overlay_content a {
+    padding: 8px;
+    text-decoration: none;
+    font-size: 36px;
+    color: #818181;
+    display: block; /* Display block instead of inline */
+    transition: 0.3s; /* Transition effects on hover (color) */
+}
+
+/* When you mouse over the navigation links, change their color */
+.settings_overlay_content a:hover, .settings_overlay_content a:focus {
     color: #f1f1f1;
 }

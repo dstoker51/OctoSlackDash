@@ -45,6 +45,13 @@
     padding: 0 0 5px 0;
 }
 
+.printer_module .snapshot_wrapper {
+    position: relative;
+    width: 100%;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+}
+
 .printer_module .snapshot {
     width: 100%;
     border-top-right-radius: 3px;

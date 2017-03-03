@@ -25,28 +25,14 @@ function switchToSnapshot(snapshot) {
     // snapshot.src = "http://155.97.12.12" + id + "/webcam/?action=snapshot";
 }
 
-function setUpStatusOverlay() {
-    $(".status").hover(
-        function() {
-            var id = Number(this.parentNode.id);
-            document.getElementById("status_overlay" + id).style.height = "100%";
-        },
-        function() {
-            var id = Number(this.parentNode.id);
-            document.getElementById("status_overlay" + id).style.height = "0%";
-        }
-    );
-}
-
-function createStatusOverlay(id) {
-    var overlay_id = id.replace("status_", "");   // Get the number only
-
+function createInfoOverlay(id) {
     // Create elements
-    var statusOverlay = document.createElement("DIV");
-    statusOverlay.className = "status_overlay";
-    statusOverlay.id = "status_overlay" + overlay_id;
+    var infoOverlay = document.createElement("DIV");
+    infoOverlay.className = "overlay";
+    infoOverlay.id = "info_overlay" + id;
+
     var overlayContent = document.createElement("DIV");
-    overlayContent.className = "status_overlay_content";
+    overlayContent.className = "info_overlay_content";
 
     var link1 = document.createElement("A");
     var linkText = document.createTextNode("About");
@@ -62,17 +48,49 @@ function createStatusOverlay(id) {
     link4.appendChild(linkText);
 
     // Structure them
-    statusOverlay.appendChild(overlayContent);
+    infoOverlay.appendChild(overlayContent);
     overlayContent.appendChild(link1);
     overlayContent.appendChild(link2);
     overlayContent.appendChild(link3);
     overlayContent.appendChild(link4);
 
     // Display them
-    document.getElementById(id).appendChild(statusOverlay);
+    //document.getElementById(parent_id).appendChild(infoOverlay);
+    return infoOverlay;
+}
 
-    // Set up the hover event handler
-    setUpStatusHover();
+function createSettingsOverlay(id) {
+    // Create elements
+    var settingsOverlay = document.createElement("DIV");
+    settingsOverlay.className = "overlay";
+    settingsOverlay.id = "settings_overlay" + id;
+
+    var overlayContent = document.createElement("DIV");
+    overlayContent.className = "settings_overlay_content";
+
+    var link1 = document.createElement("A");
+    var linkText = document.createTextNode("About");
+    link1.appendChild(linkText);
+    var link2 = document.createElement("A");
+    linkText = document.createTextNode("Services");
+    link2.appendChild(linkText);
+    var link3 = document.createElement("A");
+    linkText = document.createTextNode("Clients");
+    link3.appendChild(linkText);
+    var link4 = document.createElement("A");
+    linkText = document.createTextNode("Contact");
+    link4.appendChild(linkText);
+
+    // Structure them
+    settingsOverlay.appendChild(overlayContent);
+    overlayContent.appendChild(link1);
+    overlayContent.appendChild(link2);
+    overlayContent.appendChild(link3);
+    overlayContent.appendChild(link4);
+
+    // Display them
+    //document.getElementById(parent_id).appendChild(infoOverlay);
+    return settingsOverlay;
 }
 
 function createOctoSlackModal() {
@@ -152,7 +170,7 @@ function displaySnapshotModal(printer_id) {
     snapshotModal.style.display = "block";
 }
 
-function createEventListeners() {
+function createWindowEventListeners() {
     //Modals
     // If the user clicks anywhere outside the modal, close it
     window.onclick = function(event) {

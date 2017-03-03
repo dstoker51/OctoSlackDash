@@ -29,6 +29,9 @@ function createPrinterModule(printer) {
         printerName.innerHTML = "OctoPi-" + printerModule.id;
     }
 
+    var snapshotWrapper = document.createElement("DIV");
+    snapshotWrapper.className = "snapshot_wrapper";
+
     var snapshot = document.createElement("IMG");
     snapshot.className = "snapshot";
     snapshot.id = "snapshot_" + Number(printerModule.id);
@@ -37,6 +40,13 @@ function createPrinterModule(printer) {
     snapshot.onclick = function(){
         displaySnapshotModal(Number(printerModule.id));
     };
+    snapshotWrapper.appendChild(snapshot);
+
+    var infoOverlay = createInfoOverlay(Number(printerModule.id));  // Overlay that covers snapshot
+    snapshotWrapper.appendChild(infoOverlay);
+    var settingsOverlay = createSettingsOverlay(Number(printerModule.id));  // Overlay that covers snapshot
+    snapshotWrapper.appendChild(settingsOverlay);
+
     // snapshot.onerror = function() {
     //     snapshot.src = "img/offline.png";
     // };
@@ -54,11 +64,33 @@ function createPrinterModule(printer) {
     infoIcon.className = "icon info_icon";
     infoIcon.id = "info_icon" + Number(printerModule.id);
     infoIcon.src = "img/info_icon.png";
+    infoIcon.onclick = function(){
+        var printerId = this.id.replace("info_icon", "");
+        var overlay = document.getElementById("info_overlay" + printerId);
+        if (overlay.style.height == "100%") {
+            overlay.style.height = "0";
+        }
+        else {
+            overlay.style.height = "100%";
+        }
+
+    };
 
     var settingsIcon = document.createElement("IMG");
     settingsIcon.className = "icon settings_icon";
     settingsIcon.id = "settings_icon" + Number(printerModule.id);
     settingsIcon.src = "img/gear_icon.png";
+    settingsIcon.onclick = function(){
+        var printerId = this.id.replace("settings_icon", "");
+        var overlay = document.getElementById("settings_overlay" + printerId);
+        if (overlay.style.height == "100%") {
+            overlay.style.height = "0";
+        }
+        else {
+            overlay.style.height = "100%";
+        }
+
+    };
 
     var status = document.createElement("DIV");
     status.className = "status";
@@ -79,7 +111,7 @@ function createPrinterModule(printer) {
 
     // Structure them
     printerModule.appendChild(printerName);
-    printerModule.appendChild(snapshot);
+    printerModule.appendChild(snapshotWrapper);
     printerModule.appendChild(toolbar);
     toolbar.appendChild(printerIcon);
     toolbar.appendChild(infoIcon);
