@@ -101,37 +101,14 @@ function createOctoSlackModal() {
     modalContent.className = "octo_slack_modal_content";
     octoSlackModal.appendChild(modalContent);
 
-    var modalHeader = document.createElement("DIV");
-    modalHeader.className = "modal_header";
-
-    var modalHeaderTitle = document.createElement("H2");
-    var mhtNode = document.createTextNode("Modal Header");
-    modalHeaderTitle.appendChild(mhtNode);
-    modalHeader.appendChild(modalHeaderTitle);
-
-    // Modal body creation
-    var modalBody = document.createElement("DIV");
-    var p = document.createElement("P");
-    var pText = document.createTextNode("Some text in the Modal Body");
-    p.appendChild(pText);
-    modalBody.appendChild(p);
-
-    //Modal footer creation
-    var modalFooter = document.createElement("DIV");
-    modalFooter.className = "modal_footer";
-
-    var modalFooterText = document.createElement("H3");
-    var mftText = document.createTextNode("Modal Footer");
-    modalFooterText.appendChild(mftText);
-    modalFooter.appendChild(modalFooterText);
-
-    // Structure them
-    modalContent.appendChild(modalHeader);
-    modalContent.appendChild(modalBody);
-    modalContent.appendChild(modalFooter);
+    var iframe = document.createElement("IFRAME");
+    modalContent.appendChild(iframe);
 
     // Set up the click event for the modal
     $(".printer_icon").click(function(){
+        var printer_id = this.id.replace("printer_icon_", "");
+        var printer = getPrinterById(printer_id);
+        iframe.src = printer.octoprintUrl;
         octoSlackModal.style.display = "block";
     });
 }

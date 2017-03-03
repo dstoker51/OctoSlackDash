@@ -34,6 +34,7 @@ var printer = function (name, type, num_extruders, has_heated_bed) {
         this.type = type;
         this.num_extruders = num_extruders;
         this.has_heated_bed = has_heated_bed;
+        this.octoprintUrl = "http://155.97.12.12" + this.id;
         this.octoprintWebcamLiveUrl = "http://155.97.12.12" + this.id + "/webcam/?action=stream";
         this.octoprintWebcamSnapshotUrl = "http://155.97.12.12" + this.id + "/webcam/?action=snapshot";
     }
@@ -45,6 +46,7 @@ var printer = function (name, type, num_extruders, has_heated_bed) {
         this.type = null;
         this.num_extruders = null;
         this.has_heated_bed = null;
+        this.octoprintUrl = null;
         this.octoprintWebcamLiveUrl = null;
         this.octoprintWebcamSnapshotUrl = null;
     }
