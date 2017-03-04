@@ -57,13 +57,24 @@ var printer = function (name, type, num_extruders, has_heated_bed) {
 
 // Printer Function Definitions
 printer.prototype.batchInfo = function() {
-    var command_object = {
-        "job_name":null,
-        "time_remaining":null,
-        "progress":null,
-        "bed_temp":null,
-        "extruder_temps":null
-    };
+    var command_object;
+    if (this.has_heated_bed) {
+        command_object = {
+            "job_name":null,
+            "time_remaining":null,
+            "progress":null,
+            "bed_temp":null,
+            "extruder_temps":null
+        };
+    }
+    else {
+        command_object = {
+            "job_name":null,
+            "time_remaining":null,
+            "progress":null,
+            "extruder_temps":null
+        };
+    }
     httpRequest(this, command_object);
 };
 
@@ -75,10 +86,18 @@ printer.prototype.progress = function() {
 };
 
 printer.prototype.temps = function() {
-    var command_object = {
-        "bed_temp":null,
-        "extruder_temps":null
-    };
+    var command_object;
+    if (this.has_heated_bed) {
+        command_object = {
+            "bed_temp":null,
+            "extruder_temps":null
+        };
+    }
+    else {
+        command_object = {
+            "extruder_temps":null
+        };
+    }
     httpRequest(this, command_object);
 };
 

@@ -1,6 +1,7 @@
 "use strict()";
 var printerModuleCount = 0;
 var numModulesPerRow = 4;
+var snapshotHeightToWidthRatio = 1.3333333; // 440px/330px
 
 function updateSnapshotViews(){
     for(i=1; i<=printerModuleCount; i++){
@@ -107,20 +108,17 @@ function rotateSnapshotLeft90Deg(id) {
     var newAngle = (oldAngle - 90) % 360;
     image.title = newAngle; /* Store the rotation */
 
-    // TODO make the image fill the container. Resizing the image causes
-    // the DOM to resize the container as well, but set sizes on the
-    // container doesn't work either because of the responsive bootstrap
-
     // Perform the rotation
-    image.style.webkitTransform = "rotate("+newAngle+"deg)";
+    image.style.webkitTransform = "rotate("+newAngle+"deg) scale("+snapshotHeightToWidthRatio+")";
 }
 
 function rotateSnapshotRight90Deg(id) {
+    // Get the rotation angle stored in the snapshot title tag
     var image = document.getElementById("snapshot_" + id);
     var oldAngle = Number(image.title);
     var newAngle = (oldAngle + 90) % 360;
     image.title = newAngle; /* Store the rotation */
-    image.style.webkitTransform = "rotate("+newAngle+"deg)";
+    image.style.webkitTransform = "rotate("+newAngle+"deg) scale("+snapshotHeightToWidthRatio+")";
 }
 
 function rotateSnapshotToAngle(id, angle) {

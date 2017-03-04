@@ -24,12 +24,16 @@
         </div><!--./shell-->
 
         <script>
-            createPrinterModule(new printer("Black Mamba", "Rostock Max v2", 1, true));
-            createPrinterModule(new printer("Moby Dick", "Rostock Max v2", 1, true));
-            createPrinterModule(new printer("Printrbot", "PrintrBot Simple Metal", 1, false));
+            var blackMamba = new printer("Black Mamba", "Rostock Max v2", 1, true);
+            var mobyDick = new printer("Moby Dick", "Rostock Max v2", 1, true);
+            var printrbot = new printer("Printrbot", "PrintrBot Simple Metal", 1, false);
             var stu = new printer("Stu i3", "Wanhao Duplicator i3", 1, true);
+            var ultimaker = new printer("Ultimaker", "Ultimaker 2+", 1, true);
+            createPrinterModule(blackMamba);
+            createPrinterModule(mobyDick);
+            createPrinterModule(printrbot);
             createPrinterModule(stu);
-            createPrinterModule(new printer("Ultimaker", "Ultimaker 2+", 1, true));
+            createPrinterModule(ultimaker);
             // createPrinterModule(new printer("Taz 1", "Tazbot v4", 1, true, "username", "password", "feed", "feed"));
             // createPrinterModule(new printer("Taz 2", "Tazbot v6", 1, true, "username", "password", "feed", "feed"));
             // createPrinterModule(new printer("Taz 3", "Tazbot v5", 1, true, "username", "password", "feed", "feed"));
@@ -41,7 +45,7 @@
 
             $(document).ready(function(){
                 $("button").click(function(){
-                    stu.batchInfo();
+                    ultimaker.batchInfo();
                 });
             });
 

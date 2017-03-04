@@ -13,9 +13,7 @@ function createPrinterModule(printer) {
 
     // Create elements
     var col = document.createElement("DIV");
-    col.className = "col-xs-8 col-sm-6 col-md-6 col-lg-3 col-xl-3";
-    // var gutter = document.createElement("DIV");
-    // gutter.className = "col-xs-2 col-sm-4 col-md-";
+    col.className = "col-xs-12 col-sm-6 col-md-6 col-lg-3 col-xl-3";
 
     var printerModule = document.createElement("DIV");
     printerModule.className = "printer_module";

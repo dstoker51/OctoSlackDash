@@ -103,7 +103,7 @@
 /* MEDIA QUERIES */
 @media screen and (max-width: 768px) {
     .snapshot_modal_content {
-        width: 80%;
+        width: 90%;
     }
     .snapshot_modal_content img {
         width:100%;
