@@ -50,6 +50,7 @@
     width: 100%;
     border-top-right-radius: 3px;
     border-top-left-radius: 3px;
+    overflow: hidden;
 }
 
 .printer_module .snapshot {
@@ -85,7 +86,7 @@
     border-bottom-left-radius: 3px;
 }
 
-.toolbar .icon {
+.icon {
     position: relative;
     width: 35px;
     height: 35px;

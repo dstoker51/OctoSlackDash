@@ -28,7 +28,7 @@ function switchToSnapshot(snapshot) {
 function createInfoOverlay(id) {
     // Create elements
     var infoOverlay = document.createElement("DIV");
-    infoOverlay.className = "overlay";
+    infoOverlay.className = "overlay info_overlay";
     infoOverlay.id = "info_overlay" + id;
 
     var overlayContent = document.createElement("DIV");
@@ -48,49 +48,84 @@ function createInfoOverlay(id) {
     link4.appendChild(linkText);
 
     // Structure them
-    infoOverlay.appendChild(overlayContent);
     overlayContent.appendChild(link1);
     overlayContent.appendChild(link2);
     overlayContent.appendChild(link3);
     overlayContent.appendChild(link4);
+    infoOverlay.appendChild(overlayContent);
 
-    // Display them
-    //document.getElementById(parent_id).appendChild(infoOverlay);
     return infoOverlay;
 }
 
 function createSettingsOverlay(id) {
     // Create elements
     var settingsOverlay = document.createElement("DIV");
-    settingsOverlay.className = "overlay";
+    settingsOverlay.className = "overlay settings_overlay";
     settingsOverlay.id = "settings_overlay" + id;
 
     var overlayContent = document.createElement("DIV");
     overlayContent.className = "settings_overlay_content";
 
-    var link1 = document.createElement("A");
-    var linkText = document.createTextNode("About");
-    link1.appendChild(linkText);
-    var link2 = document.createElement("A");
-    linkText = document.createTextNode("Services");
-    link2.appendChild(linkText);
-    var link3 = document.createElement("A");
-    linkText = document.createTextNode("Clients");
-    link3.appendChild(linkText);
-    var link4 = document.createElement("A");
-    linkText = document.createTextNode("Contact");
-    link4.appendChild(linkText);
+    var rotateLeft = document.createElement("A");
+    rotateLeft.className = "icon rotate_left_link";
+    rotateLeft.id = "rotate_left_link_" + id;
+    var rotateLeftIcon = document.createElement("IMG");
+    rotateLeftIcon.className = "icon rotate_left_icon";
+    rotateLeftIcon.id = "rotate_left_icon_" + id;
+    rotateLeftIcon.src = "img/rotate_left.png";
+    rotateLeft.onclick = function() {
+        var id = this.id.replace("rotate_left_link_", "");
+        rotateSnapshotLeft90Deg(id);
+    };
+
+    var rotateRight = document.createElement("A");
+    rotateRight.className = "icon rotate_right_link";
+    rotateRight.id = "rotate_right_link_" + id;
+    var rotateRightIcon = document.createElement("IMG");
+    rotateRightIcon.className = "icon rotate_right_icon";
+    rotateRightIcon.id = "rotate_right_icon_" + id;
+    rotateRightIcon.src = "img/rotate_right.png";
+    rotateRight.onclick = function() {
+        var id = this.id.replace("rotate_right_link_", "");
+        rotateSnapshotRight90Deg(id);
+    };
 
     // Structure them
+    rotateLeft.appendChild(rotateLeftIcon);
+    rotateRight.appendChild(rotateRightIcon);
+    overlayContent.appendChild(rotateLeft);
+    overlayContent.appendChild(rotateRight);
     settingsOverlay.appendChild(overlayContent);
-    overlayContent.appendChild(link1);
-    overlayContent.appendChild(link2);
-    overlayContent.appendChild(link3);
-    overlayContent.appendChild(link4);
 
-    // Display them
-    //document.getElementById(parent_id).appendChild(infoOverlay);
     return settingsOverlay;
+}
+
+function rotateSnapshotLeft90Deg(id) {
+    // Get the rotation angle stored in the snapshot title tag
+    var image = document.getElementById("snapshot_" + id);
+    var oldAngle = Number(image.title);
+    var newAngle = (oldAngle - 90) % 360;
+    image.title = newAngle; /* Store the rotation */
+
+    // TODO make the image fill the container. Resizing the image causes
+    // the DOM to resize the container as well, but set sizes on the
+    // container doesn't work either because of the responsive bootstrap
+
+    // Perform the rotation
+    image.style.webkitTransform = "rotate("+newAngle+"deg)";
+}
+
+function rotateSnapshotRight90Deg(id) {
+    var image = document.getElementById("snapshot_" + id);
+    var oldAngle = Number(image.title);
+    var newAngle = (oldAngle + 90) % 360;
+    image.title = newAngle; /* Store the rotation */
+    image.style.webkitTransform = "rotate("+newAngle+"deg)";
+}
+
+function rotateSnapshotToAngle(id, angle) {
+    var image = document.getElementById("snapshot_" + id);
+    image.style.webkitTransform = "rotate("+angle+"deg)";
 }
 
 function createOctoSlackModal() {
@@ -129,6 +164,7 @@ function createSnapshotModal() {
 
     var modalContent = document.createElement("DIV");
     modalContent.className = "snapshot_modal_content";
+    modalContent.id = "snapshot_modal_content";
     snapshotModal.appendChild(modalContent);
 
     var snapshotImage = document.createElement("IMG");
@@ -139,10 +175,18 @@ function createSnapshotModal() {
 }
 
 function displaySnapshotModal(printer_id) {
-    var modalContent = document.getElementById("snapshot_modal_image");
-    var printer = getPrinterById(printer_id);
-    modalContent.src = printer.octoprintWebcamLiveUrl;
+    // Rotate the container to match the set rotation of the static snapshot
+    var snapshot = document.getElementById("snapshot_" + printer_id);
+    var angle = snapshot.title; //Title contains angle
+    var modalContent = document.getElementById("snapshot_modal_content");
+    modalContent.style.webkitTransform = "rotate("+angle+"deg)";
 
+    // Set the modal image source to be the appropriate webcam feed
+    var printer = getPrinterById(printer_id);
+    var modalImage = document.getElementById("snapshot_modal_image");
+    modalImage.src = printer.octoprintWebcamLiveUrl;
+
+    // Display the modal
     var snapshotModal = document.getElementById("snapshot_modal");
     snapshotModal.style.display = "block";
 }

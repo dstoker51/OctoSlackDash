@@ -1,4 +1,5 @@
 "use strict()";
+
 function createPrinterModule(printer) {
     // Create a new row if needed
     if (printerModuleCount % numModulesPerRow === 0) {
@@ -37,6 +38,7 @@ function createPrinterModule(printer) {
     snapshot.id = "snapshot_" + Number(printerModule.id);
     snapshot.src = printer.octoprintWebcamSnapshotUrl;
     snapshot.alt = printerName.innerHTML;
+    snapshot.title = "0";
     snapshot.onclick = function(){
         displaySnapshotModal(Number(printerModule.id));
     };
@@ -67,11 +69,11 @@ function createPrinterModule(printer) {
     infoIcon.onclick = function(){
         var printerId = this.id.replace("info_icon", "");
         var overlay = document.getElementById("info_overlay" + printerId);
-        if (overlay.style.height == "100%") {
-            overlay.style.height = "0";
+        if (overlay.style.display == "block") {
+            overlay.style.display = "none";
         }
         else {
-            overlay.style.height = "100%";
+            overlay.style.display = "block";
         }
 
     };
@@ -83,11 +85,11 @@ function createPrinterModule(printer) {
     settingsIcon.onclick = function(){
         var printerId = this.id.replace("settings_icon", "");
         var overlay = document.getElementById("settings_overlay" + printerId);
-        if (overlay.style.height == "100%") {
-            overlay.style.height = "0";
+        if (overlay.style.display == "block") {
+            overlay.style.display = "none";
         }
         else {
-            overlay.style.height = "100%";
+            overlay.style.display = "block";
         }
 
     };
