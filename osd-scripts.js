@@ -1,130 +1,4 @@
 "use strict()";
-var printerModuleCount = 0;
-var numModulesPerRow = 4;
-var snapshotHeightToWidthRatio = 1.3333333; // 440px/330px
-
-function updateSnapshotViews(){
-    for(i=1; i<=printerModuleCount; i++){
-        var snapshot = document.getElementById("snapshot_" + i);
-        var copy = snapshot.src;
-        snapshot.src = copy;
-    }
-}
-
-function switchToStream(snapshot) {
-    var id = Number(snapshot.id[snapshot.id.length-1]);
-    var printer = getPrinterById(id);
-    snapshot.src = printer.octoprintWebcamLiveUrl;
-    // snapshot.src = "http://155.97.12.12" + id + "/webcam/?action=stream";
-}
-
-function switchToSnapshot(snapshot) {
-    var id = Number(snapshot.id[snapshot.id.length-1]);
-    window.stop();  // This stops the stream so that it doesn't keep running in the background
-    var printer = getPrinterById(id);
-    snapshot.src = printer.octoprintWebcamSnapshotUrl;
-    // snapshot.src = "http://155.97.12.12" + id + "/webcam/?action=snapshot";
-}
-
-function createInfoOverlay(id) {
-    // Create elements
-    var infoOverlay = document.createElement("DIV");
-    infoOverlay.className = "overlay info_overlay";
-    infoOverlay.id = "info_overlay" + id;
-
-    var overlayContent = document.createElement("DIV");
-    overlayContent.className = "info_overlay_content";
-
-    var link1 = document.createElement("A");
-    var linkText = document.createTextNode("About");
-    link1.appendChild(linkText);
-    var link2 = document.createElement("A");
-    linkText = document.createTextNode("Services");
-    link2.appendChild(linkText);
-    var link3 = document.createElement("A");
-    linkText = document.createTextNode("Clients");
-    link3.appendChild(linkText);
-    var link4 = document.createElement("A");
-    linkText = document.createTextNode("Contact");
-    link4.appendChild(linkText);
-
-    // Structure them
-    overlayContent.appendChild(link1);
-    overlayContent.appendChild(link2);
-    overlayContent.appendChild(link3);
-    overlayContent.appendChild(link4);
-    infoOverlay.appendChild(overlayContent);
-
-    return infoOverlay;
-}
-
-function createSettingsOverlay(id) {
-    // Create elements
-    var settingsOverlay = document.createElement("DIV");
-    settingsOverlay.className = "overlay settings_overlay";
-    settingsOverlay.id = "settings_overlay" + id;
-
-    var overlayContent = document.createElement("DIV");
-    overlayContent.className = "settings_overlay_content";
-
-    var rotateLeft = document.createElement("A");
-    rotateLeft.className = "icon rotate_left_link";
-    rotateLeft.id = "rotate_left_link_" + id;
-    var rotateLeftIcon = document.createElement("IMG");
-    rotateLeftIcon.className = "icon rotate_left_icon";
-    rotateLeftIcon.id = "rotate_left_icon_" + id;
-    rotateLeftIcon.src = "img/rotate_left.png";
-    rotateLeft.onclick = function() {
-        var id = this.id.replace("rotate_left_link_", "");
-        rotateSnapshotLeft90Deg(id);
-    };
-
-    var rotateRight = document.createElement("A");
-    rotateRight.className = "icon rotate_right_link";
-    rotateRight.id = "rotate_right_link_" + id;
-    var rotateRightIcon = document.createElement("IMG");
-    rotateRightIcon.className = "icon rotate_right_icon";
-    rotateRightIcon.id = "rotate_right_icon_" + id;
-    rotateRightIcon.src = "img/rotate_right.png";
-    rotateRight.onclick = function() {
-        var id = this.id.replace("rotate_right_link_", "");
-        rotateSnapshotRight90Deg(id);
-    };
-
-    // Structure them
-    rotateLeft.appendChild(rotateLeftIcon);
-    rotateRight.appendChild(rotateRightIcon);
-    overlayContent.appendChild(rotateLeft);
-    overlayContent.appendChild(rotateRight);
-    settingsOverlay.appendChild(overlayContent);
-
-    return settingsOverlay;
-}
-
-function rotateSnapshotLeft90Deg(id) {
-    // Get the rotation angle stored in the snapshot title tag
-    var image = document.getElementById("snapshot_" + id);
-    var oldAngle = Number(image.title);
-    var newAngle = (oldAngle - 90) % 360;
-    image.title = newAngle; /* Store the rotation */
-
-    // Perform the rotation
-    image.style.webkitTransform = "rotate("+newAngle+"deg) scale("+snapshotHeightToWidthRatio+")";
-}
-
-function rotateSnapshotRight90Deg(id) {
-    // Get the rotation angle stored in the snapshot title tag
-    var image = document.getElementById("snapshot_" + id);
-    var oldAngle = Number(image.title);
-    var newAngle = (oldAngle + 90) % 360;
-    image.title = newAngle; /* Store the rotation */
-    image.style.webkitTransform = "rotate("+newAngle+"deg) scale("+snapshotHeightToWidthRatio+")";
-}
-
-function rotateSnapshotToAngle(id, angle) {
-    var image = document.getElementById("snapshot_" + id);
-    image.style.webkitTransform = "rotate("+angle+"deg)";
-}
 
 function createOctoSlackModal() {
     // Create elements
@@ -187,6 +61,9 @@ function displaySnapshotModal(printer_id) {
     // Display the modal
     var snapshotModal = document.getElementById("snapshot_modal");
     snapshotModal.style.display = "block";
+
+    // Keep the snapshots from updating while the modal is active
+    shouldUpdateSnapshots = false;
 }
 
 function createWindowEventListeners() {
@@ -197,14 +74,27 @@ function createWindowEventListeners() {
             var snapshotModal = document.getElementById("snapshot_modal");
             snapshotModal.style.display = "none";
             window.stop();  // This stops the stream so that it doesn't keep running in the background
+
+            // Restart the snapshot updates
+            shouldUpdateSnapshots = true;
         }
         else if (event.target.id == "octo_slack_modal") {
             var octoSlackModal = document.getElementById("octo_slack_modal");
             octoSlackModal.style.display = "none";
             window.stop();  // This stops the stream so that it doesn't keep running in the background
+
+            // Restart the snapshot updates
+            shouldUpdateSnapshots = true;
         }
     };
 
     // Set snapshot update interval
     window.setInterval(updateSnapshotViews, 3000);
+}
+
+function updateSnapshotViews() {
+    for (var printer in printers) {
+        var printerModule = printers[printer].printerModule;
+        printerModule.updateSnapshotView();
+    }
 }

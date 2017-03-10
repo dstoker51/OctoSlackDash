@@ -15,11 +15,18 @@ function deletePrinter(printer) {
 
 function getPrinterById(id) {
     for (var i = 0; i < printers.length; i++) {
-        if (printers[i].id == id) {
+        if (printers[i].id == Number(id))
             return printers[i];
-        }
     }
     return null;
+}
+
+function getPrinterByModuleId(id) {
+    id = Number(id) - 1;
+    if(printers.length > Number(id))
+        return printers[id];
+    else
+        return null;
 }
 
 // Printer
@@ -32,11 +39,12 @@ var printer = function (name, type, num_extruders, has_heated_bed) {
         this.id = printers.length + 1;  //TODO this +1 should go away when the database id is used
         this.name = name;
         this.type = type;
-        this.num_extruders = num_extruders;
-        this.has_heated_bed = has_heated_bed;
+        this.numExtruders = num_extruders;
+        this.hasHeatedBed = has_heated_bed;
         this.octoprintUrl = "http://155.97.12.12" + this.id;
         this.octoprintWebcamLiveUrl = "http://155.97.12.12" + this.id + "/webcam/?action=stream";
         this.octoprintWebcamSnapshotUrl = "http://155.97.12.12" + this.id + "/webcam/?action=snapshot";
+        this.printerModule = new printerModule(this);
     }
     else
     {
@@ -44,11 +52,12 @@ var printer = function (name, type, num_extruders, has_heated_bed) {
         this.id = printers.length;
         this.name = null;
         this.type = null;
-        this.num_extruders = null;
-        this.has_heated_bed = null;
+        this.numExtruders = null;
+        this.hasHeatedBed = null;
         this.octoprintUrl = null;
         this.octoprintWebcamLiveUrl = null;
         this.octoprintWebcamSnapshotUrl = null;
+        this.printerModule = null;
     }
 
     addPrinter(this);
@@ -56,7 +65,7 @@ var printer = function (name, type, num_extruders, has_heated_bed) {
 };
 
 // Printer Function Definitions
-printer.prototype.batchInfo = function() {
+printer.prototype.requestBatchInfo = function() {
     var command_object;
     if (this.has_heated_bed) {
         command_object = {
@@ -78,14 +87,14 @@ printer.prototype.batchInfo = function() {
     httpRequest(this, command_object);
 };
 
-printer.prototype.progress = function() {
+printer.prototype.requestProgressInfo = function() {
     var command_object = {
         "progress":null
     };
     httpRequest(this, command_object);
 };
 
-printer.prototype.temps = function() {
+printer.prototype.requestTemperatureInfo = function() {
     var command_object;
     if (this.has_heated_bed) {
         command_object = {
@@ -101,7 +110,7 @@ printer.prototype.temps = function() {
     httpRequest(this, command_object);
 };
 
-printer.prototype.jobName = function() {
+printer.prototype.requestJobName = function() {
     var command_object = {
         "job_name":null
     };

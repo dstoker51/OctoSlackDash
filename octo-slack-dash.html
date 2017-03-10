@@ -7,7 +7,7 @@
         <script src="osd-scripts.js"></script>
         <script src="osd-printers.js"></script>
         <script src="osd-http-request-wrapper.js"></script>
-        <script src="osd-create-printer-module.js"></script>
+        <script src="printer-module.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
         <link href="osd-css.css" rel="stylesheet">
@@ -29,11 +29,12 @@
             var printrbot = new printer("Printrbot", "PrintrBot Simple Metal", 1, false);
             var stu = new printer("Stu i3", "Wanhao Duplicator i3", 1, true);
             var ultimaker = new printer("Ultimaker", "Ultimaker 2+", 1, true);
-            createPrinterModule(blackMamba);
-            createPrinterModule(mobyDick);
-            createPrinterModule(printrbot);
-            createPrinterModule(stu);
-            createPrinterModule(ultimaker);
+
+            // var pm1 = new printerModule(blackMamba);
+            // var pm2 = new printerModule(mobyDick);
+            // var pm3 = new printerModule(printrbot);
+            // var pm4 = new printerModule(stu);
+            // var pm5 = new printerModule(ultimaker);
             // createPrinterModule(new printer("Taz 1", "Tazbot v4", 1, true, "username", "password", "feed", "feed"));
             // createPrinterModule(new printer("Taz 2", "Tazbot v6", 1, true, "username", "password", "feed", "feed"));
             // createPrinterModule(new printer("Taz 3", "Tazbot v5", 1, true, "username", "password", "feed", "feed"));
@@ -45,7 +46,7 @@
 
             $(document).ready(function(){
                 $("button").click(function(){
-                    ultimaker.batchInfo();
+                    ultimaker.requestBatchInfo();
                 });
             });
 

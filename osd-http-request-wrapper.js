@@ -18,7 +18,12 @@ function httpRequest(printer, command_object) {
         contentType:"application/json; charset=utf-8",
         dataType:"json",
         success: function(data, status) {
-            showResponse(JSON.stringify(data), status);
+            // var jsonObject = JSON.stringify(data);
+            // showResponse(jsonObject, status);
+
+            var response = data.payload; // Send only the data.
+            var printer = getPrinterById(data.printer_id);
+            printer.printerModule.updatePrinterStatus(data.printer_id, response);
         }
     }).fail(function(data, status) {
         var received_error = $.parseJSON(data.responseText);
