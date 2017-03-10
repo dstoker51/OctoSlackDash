@@ -132,7 +132,7 @@ printerModule.prototype.createPrinterModule = function(printer) {
     // Display them
     document.getElementById("container").lastChild.appendChild(col);
 
-    return module.id;
+    return module.id
 };
 
 printerModule.prototype.updateProgressBar = function(value) {
