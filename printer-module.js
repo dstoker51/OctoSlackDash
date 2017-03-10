@@ -132,7 +132,7 @@ printerModule.prototype.createPrinterModule = function(printer) {
     // Display them
     document.getElementById("container").lastChild.appendChild(col);
 
-    return module.id
+    return module.id;
 };
 
 printerModule.prototype.updateProgressBar = function(value) {
@@ -142,44 +142,44 @@ printerModule.prototype.updateProgressBar = function(value) {
     progressBar.innerHTML = "" + value + "%";
 };
 
-printerModule.prototype.updateJobName = function(id, value) {
+printerModule.prototype.updateJobName = function(value) {
 
 };
 
-printerModule.prototype.updateTimeRemaining = function(id, value) {
+printerModule.prototype.updateTimeRemaining = function(value) {
 
 };
 
-printerModule.prototype.updateProgress = function(id, value) {
+printerModule.prototype.updateProgress = function(value) {
     //TODO progress numbers in status
     this.updateProgressBar(value.completion);
 };
 
-printerModule.prototype.updateBedTemp = function(id, value) {
+printerModule.prototype.updateBedTemp = function(value) {
 
 };
 
-printerModule.prototype.updateExtruderTemps = function(id, value) {
+printerModule.prototype.updateExtruderTemps = function(value) {
 
 };
 
-printerModule.prototype.updatePrinterStatus = function(id, response) {
+printerModule.prototype.updatePrinterStatus = function(response) {
     // Selectively update status according to data in response
     if (response.hasOwnProperty("job_name")) {
-        this.updateJobName(id, response.job_name);
+        this.updateJobName(response.job_name);
     }
     if (response.hasOwnProperty("time_remaining")) {
-        this.updateTimeRemaining(id, response.time_remaining);
+        this.updateTimeRemaining(response.time_remaining);
     }
     if (response.hasOwnProperty("progress")) {
-        this.updateProgress(id, response.progress);
+        this.updateProgress(response.progress);
     }
 
     if (response.hasOwnProperty("extruder_temps")) {
-        this.updateExtruderTemps(id, response.extruder_temps);
+        this.updateExtruderTemps(response.extruder_temps);
 
         if (getPrinterByModuleId(this.id).hasHeatedBed)
-            this.updateBedTemp(id, response.extruder_temps);
+            this.updateBedTemp(response.extruder_temps);
     }
 };
 
@@ -266,9 +266,9 @@ printerModule.prototype.createSettingsOverlay = function(id) {
     return settingsOverlay;
 };
 
-printerModule.prototype.rotateSnapshotLeft90Deg = function(id) {
+printerModule.prototype.rotateSnapshotLeft90Deg = function() {
     // Get the rotation angle stored in the snapshot title tag
-    var image = document.getElementById("snapshot_" + id);
+    var image = document.getElementById("snapshot_" + this.id);
     var oldAngle = Number(image.title);
     var newAngle = (oldAngle - 90) % 360;
     image.title = newAngle; /* Store the rotation */
@@ -277,16 +277,16 @@ printerModule.prototype.rotateSnapshotLeft90Deg = function(id) {
     image.style.webkitTransform = "rotate("+newAngle+"deg) scale("+snapshotHeightToWidthRatio+")";
 };
 
-printerModule.prototype.rotateSnapshotRight90Deg = function(id) {
+printerModule.prototype.rotateSnapshotRight90Deg = function() {
     // Get the rotation angle stored in the snapshot title tag
-    var image = document.getElementById("snapshot_" + id);
+    var image = document.getElementById("snapshot_" + this.id);
     var oldAngle = Number(image.title);
     var newAngle = (oldAngle + 90) % 360;
     image.title = newAngle; /* Store the rotation */
     image.style.webkitTransform = "rotate("+newAngle+"deg) scale("+snapshotHeightToWidthRatio+")";
 };
 
-printerModule.prototype.rotateSnapshotToAngle = function(id, angle) {
-    var image = document.getElementById("snapshot_" + id);
+printerModule.prototype.rotateSnapshotToAngle = function(angle) {
+    var image = document.getElementById("snapshot_" + this.id);
     image.style.webkitTransform = "rotate("+angle+"deg)";
 };
