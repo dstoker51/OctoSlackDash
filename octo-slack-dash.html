@@ -4,11 +4,14 @@
         <title>Octo-Slack-Dash</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="osd-scripts.js"></script>
         <script src="osd-printers.js"></script>
         <script src="osd-http-request-wrapper.js"></script>
         <script src="printer-module.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="sockjs.min.js"></script>
+        <script src="packed-client.js"></script>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
         <link href="osd-css.css" rel="stylesheet">
         <link href="osd-css-modals.css" rel="stylesheet">
@@ -16,6 +19,7 @@
         <link href="osd-css-printer-modules.css" rel="stylesheet">
     </head>
     <body>
+        <div id="test_area"></div>
         <div class="nav_bar" id="nav_bar"></div>
         <div class="octo_slack_modal" id="octo_slack_modal"></div>
         <div class="snapshot_modal" id="snapshot_modal"></div>
@@ -28,7 +32,16 @@
             var mobyDick = new printer("Moby Dick", "Rostock Max v2", 1, true);
             var printrbot = new printer("Printrbot", "PrintrBot Simple Metal", 1, false);
             var stu = new printer("Stu i3", "Wanhao Duplicator i3", 1, true);
-            var ultimaker = new printer("Ultimaker", "Ultimaker 2+", 1, true);
+            // var ultimaker = new printer("Ultimaker", "Ultimaker 2+", 1, true);
+
+            OctoPrint.options.baseurl = "http://155.97.12.124";
+            OctoPrint.options.apikey = "octopi4apikey";
+
+            OctoPrint.socket.connect();
+
+            OctoPrint.socket.onMessage("*", function(message){
+                document.getElementById('test_area').innerHTML = response;
+            });
 
             // var pm1 = new printerModule(blackMamba);
             // var pm2 = new printerModule(mobyDick);
@@ -46,11 +59,11 @@
 
             $(document).ready(function(){
                 $("button").click(function(){
-                    ultimaker.requestBatchInfo();
+                    stu.requestBatchInfo();
                 });
             });
 
         </script>
-        <button>Send an HTTP GET request to a page and get the result back</button>
+        <button>Send an HTTP GET request</button>
     </body>
 </html>
