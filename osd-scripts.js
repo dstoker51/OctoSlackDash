@@ -14,7 +14,7 @@ function createOctoSlackModal() {
     // Set up the click event for the modal
     $(".printer_icon").click(function(){
         var printer_id = this.id.replace("printer_icon_", "");
-        var printer = getPrinterById(printer_id);
+        var printer = getPrinterByPrinterId(printer_id);
         iframe.src = printer.octoprintUrl;
         octoSlackModal.style.display = "block";
     });
@@ -54,7 +54,7 @@ function displaySnapshotModal(printer_id) {
     modalContent.style.webkitTransform = "rotate("+angle+"deg)";
 
     // Set the modal image source to be the appropriate webcam feed
-    var printer = getPrinterById(printer_id);
+    var printer = getPrinterByPrinterId(printer_id);
     var modalImage = document.getElementById("snapshot_modal_image");
     modalImage.src = printer.octoprintWebcamLiveUrl;
 

@@ -13,7 +13,7 @@ function deletePrinter(printer) {
     }
 }
 
-function getPrinterById(id) {
+function getPrinterByPrinterId(id) {
     for (var i = 0; i < printers.length; i++) {
         if (printers[i].id == Number(id))
             return printers[i];

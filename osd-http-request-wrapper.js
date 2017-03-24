@@ -22,7 +22,7 @@ function httpRequest(printer, command_object) {
             // showResponse(jsonObject, status);
 
             var response = data.payload; // Send only the data.
-            var printer = getPrinterById(data.printer_id);
+            var printer = getPrinterByPrinterId(data.printer_id);
             printer.printerModule.updatePrinterStatus(response);
         }
     }).fail(function(data, status) {

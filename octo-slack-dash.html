@@ -37,20 +37,11 @@
             OctoPrint.options.baseurl = "http://155.97.12.124";
             OctoPrint.options.apikey = "octopi4apikey";
 
-            OctoPrint.socket.connect();
-
-            OctoPrint.socket.onMessage("*", function(message){
-                document.getElementById('test_area').innerHTML = response;
-            });
-
-            // var pm1 = new printerModule(blackMamba);
-            // var pm2 = new printerModule(mobyDick);
-            // var pm3 = new printerModule(printrbot);
-            // var pm4 = new printerModule(stu);
-            // var pm5 = new printerModule(ultimaker);
-            // createPrinterModule(new printer("Taz 1", "Tazbot v4", 1, true, "username", "password", "feed", "feed"));
-            // createPrinterModule(new printer("Taz 2", "Tazbot v6", 1, true, "username", "password", "feed", "feed"));
-            // createPrinterModule(new printer("Taz 3", "Tazbot v5", 1, true, "username", "password", "feed", "feed"));
+            // OctoPrint.socket.connect();
+            //
+            // OctoPrint.socket.onMessage("test", function(message){
+            //     document.getElementById('test_area').innerHTML = response;
+            // });
 
             createNavBar();
             createOctoSlackModal();
@@ -59,7 +50,20 @@
 
             $(document).ready(function(){
                 $("button").click(function(){
-                    stu.requestBatchInfo();
+                    //stu.requestBatchInfo();
+                    OctoPrint.job.get()
+                        .done(function(data, status){
+                            stu.printerModule.updatePrinterStatus(data);
+                            var printerState = data.state;
+                            if(printerState == "Operational") {
+                                stu.printerModule.DOM.className += " idle";
+                            }
+                            document.getElementById("test_area").innerHTML = data.state;
+                        })
+                        .fail(function(){
+                            console.error("Test OctoPrint Javascript API request failed.");
+                            stu.printerModule.DOM.className = "printer_module error"
+                        });
                 });
             });
 

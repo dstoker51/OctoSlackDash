@@ -6,7 +6,8 @@ var snapshotHeightToWidthRatio = 1.3333333; // 440px/330px
 var shouldUpdateSnapshots = true;
 
 var printerModule = function(printer) {
-    this.id = this.createPrinterModule(printer);
+    this.DOM = this.createPrinterModule(printer);
+    this.id = this.DOM.id;
 };
 
 printerModule.prototype.createPrinterModule = function(printer) {
@@ -132,7 +133,7 @@ printerModule.prototype.createPrinterModule = function(printer) {
     // Display them
     document.getElementById("container").lastChild.appendChild(col);
 
-    return module.id;
+    return module;
 };
 
 printerModule.prototype.updateProgressBar = function(value) {
@@ -241,7 +242,8 @@ printerModule.prototype.createSettingsOverlay = function(id) {
     rotateLeftIcon.src = "img/rotate_left.png";
     rotateLeft.onclick = function() {
         var id = this.id.replace("rotate_left_link_", "");
-        rotateSnapshotLeft90Deg(id);
+        var printer = getPrinterByModuleId(id);
+        printer.printerModule.rotateSnapshotLeft90Deg();
     };
 
     var rotateRight = document.createElement("A");
@@ -253,7 +255,8 @@ printerModule.prototype.createSettingsOverlay = function(id) {
     rotateRightIcon.src = "img/rotate_right.png";
     rotateRight.onclick = function() {
         var id = this.id.replace("rotate_right_link_", "");
-        rotateSnapshotRight90Deg(id);
+        var printer = getPrinterByModuleId(id);
+        printer.printerModule.rotateSnapshotRight90Deg();
     };
 
     // Structure them
