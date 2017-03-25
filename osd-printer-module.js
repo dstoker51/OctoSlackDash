@@ -35,7 +35,7 @@ printerModule.prototype.createPrinterModule = function(printer) {
         printerName.innerHTML = printer.name;
     else {
         // Badly constructed printers still need a name
-        printerName.innerHTML = "OctoPi-" + module.id;
+        printerName.innerHTML = "Error" + module.id;
     }
 
     var snapshotWrapper = document.createElement("DIV");
@@ -82,6 +82,8 @@ printerModule.prototype.createPrinterModule = function(printer) {
         }
         else {
             overlay.style.display = "block";
+            activeSecondLevelObject = overlay;
+            activeSecondLevelController = this;
         }
 
     };
@@ -90,17 +92,18 @@ printerModule.prototype.createPrinterModule = function(printer) {
     settingsIcon.className = "icon settings_icon";
     settingsIcon.id = "settings_icon" + Number(module.id);
     settingsIcon.src = "img/gear_icon.png";
-    settingsIcon.onclick = function(){
-        var printerId = this.id.replace("settings_icon", "");
-        var overlay = document.getElementById("settings_overlay" + printerId);
-        if (overlay.style.display == "block") {
-            overlay.style.display = "none";
-        }
-        else {
-            overlay.style.display = "block";
-        }
-
-    };
+    // settingsIcon.onclick = function(){
+    //     var printerId = this.id.replace("settings_icon", "");
+    //     var overlay = document.getElementById("settings_overlay" + printerId);
+    //     if (overlay.style.display == "block") {
+    //         overlay.style.display = "none";
+    //     }
+    //     else {
+    //         overlay.style.display = "block";
+    //         activeSecondLevelObject = overlay;
+    //         activeSecondLevelController = this;
+    //     }
+    // };
 
     var status = document.createElement("DIV");
     status.className = "status";

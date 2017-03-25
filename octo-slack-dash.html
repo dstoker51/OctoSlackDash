@@ -8,8 +8,9 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="osd-scripts.js"></script>
         <script src="osd-printers.js"></script>
+        <script src="osd-printer.js"></script>
         <script src="osd-http-request-wrapper.js"></script>
-        <script src="printer-module.js"></script>
+        <script src="osd-printer-module.js"></script>
         <script src="sockjs.min.js"></script>
         <script src="packed-client.js"></script>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -56,13 +57,13 @@
                             stu.printerModule.updatePrinterStatus(data);
                             var printerState = data.state;
                             if(printerState == "Operational") {
-                                stu.printerModule.DOM.className += " idle";
+                                stu.printerModule.DOM.className = "printer_module idle";
                             }
                             document.getElementById("test_area").innerHTML = data.state;
                         })
                         .fail(function(){
                             console.error("Test OctoPrint Javascript API request failed.");
-                            stu.printerModule.DOM.className = "printer_module error"
+                            stu.printerModule.DOM.className = "printer_module error";
                         });
                 });
             });

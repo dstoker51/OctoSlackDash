@@ -1,5 +1,14 @@
 "use strict()";
 
+/* The second level object is any object like a modal or overlay that is "above"
+ * the regular page. Clicking on anything that is not this object will cause
+ * the object to close. This makes it so only one modal or menu item can be
+ * active at a time, and is much cheaper than scanning through all items
+ * whenever a click occurs to see if they are active and disable them.
+ */
+var activeSecondLevelObject = null;
+var activeSecondLevelController = null;
+
 function createOctoSlackModal() {
     // Create elements
     var octoSlackModal = document.getElementById("octo_slack_modal");
@@ -67,25 +76,73 @@ function displaySnapshotModal(printer_id) {
 }
 
 function createWindowEventListeners() {
-    //Modals
-    // If the user clicks anywhere outside the modal, close it
     window.onclick = function(event) {
-        if (event.target.id == "snapshot_modal") {
-            var snapshotModal = document.getElementById("snapshot_modal");
-            snapshotModal.style.display = "none";
-            window.stop();  // This stops the stream so that it doesn't keep running in the background
+        var clickedObject = event.target;
 
-            // Restart the snapshot updates
-            shouldUpdateSnapshots = true;
-        }
-        else if (event.target.id == "octo_slack_modal") {
-            var octoSlackModal = document.getElementById("octo_slack_modal");
-            octoSlackModal.style.display = "none";
-            window.stop();  // This stops the stream so that it doesn't keep running in the background
+        /* BUTTONS */
+        if (clickedObject.className.includes("settings_icon")) {
+            var printerId = event.target.id.replace("settings_icon", "");
+            var overlay = document.getElementById("settings_overlay" + printerId);
 
-            // Restart the snapshot updates
-            shouldUpdateSnapshots = true;
+            if (clickedObject === activeSecondLevelController) {
+                overlay.style.display = "none";
+                activeSecondLevelController = null;
+                activeSecondLevelObject = null;
+            }
+            else {
+                overlay.style.display = "block";
+                activeSecondLevelObject = overlay;
+                activeSecondLevelController = clickedObject;
+            }
         }
+        // else if(clickedObject.className.includes("info_icon")) {
+        //
+        // }
+
+        /* ACTIVE SECOND-LEVEL OBJECT */
+        if (activeSecondLevelObject !== null &&
+            clickedObject !== activeSecondLevelObject &&
+            !$.contains(activeSecondLevelObject, clickedObject) &&
+            clickedObject !== activeSecondLevelController)
+        {
+            activeSecondLevelObject.style.display = "none";
+            activeSecondLevelObject = null;
+            activeSecondLevelController = null;
+
+            if (clickedObject.id == "snapshot_modal" || clickedObject.id == "octo_slack_modal") {
+                window.stop();  // This stops the stream so that it doesn't keep running in the background
+                shouldUpdateSnapshots = true; // Restart the snapshot updates
+            }
+        }
+
+        /* MODALS */
+        // If the user clicks anywhere outside the modals, close it
+        // if (clickedObjectId == "snapshot_modal_content" || clickedObjectId == "octo_slack_modal_content") {
+        //     event.target.style.display = "none";
+        //     window.stop();  // This stops the stream so that it doesn't keep running in the background
+        //
+        //     // Restart the snapshot updates
+        //     shouldUpdateSnapshots = true;
+        // }
+        //
+        // /* OVERLAYS */
+        // if (clickedObjectId == "info_overlay" || clickedObjectId == "settings_overlay") {
+        //     event.target.style.display = "none";
+        //     window.stop();  // This stops the stream so that it doesn't keep running in the background
+        //
+        //     // Restart the snapshot updates
+        //     shouldUpdateSnapshots = true;
+        // }
+        // If the user clicks anywhere outside the info button, close it
+        // if (!clickedObjectClass.includes("info_overlay") && !clickedObjectClass.includes("info_icon")){
+        //     var overlays = document.getElementsByClassName("overlay");
+        //     if(overlays !== undefined) {
+        //         for(var i=0; i<overlays.length; i++) {
+        //             overlays.item(i).style.display = "none";
+        //         }
+        //     }
+        // }
+
     };
 
     // Set snapshot update interval

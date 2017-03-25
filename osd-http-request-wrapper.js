@@ -1,4 +1,5 @@
 "use strict()";
+
 var server_url = "https://studarin.ngrok.io/";
 var server_printer_url = "https://studarin.ngrok.io/printer";
 
@@ -8,8 +9,6 @@ function httpRequest(printer, command_object) {
         "commands": command_object
     };
     var json = JSON.stringify(serializable_object);
-    //$.get(URL,data,function(data,status,xhr),dataType)
-    //$.post(URL,data,function(data,status,xhr),dataType)
 
     $.ajax({
         url:server_printer_url,
@@ -18,9 +17,6 @@ function httpRequest(printer, command_object) {
         contentType:"application/json; charset=utf-8",
         dataType:"json",
         success: function(data, status) {
-            // var jsonObject = JSON.stringify(data);
-            // showResponse(jsonObject, status);
-
             var response = data.payload; // Send only the data.
             var printer = getPrinterByPrinterId(data.printer_id);
             printer.printerModule.updatePrinterStatus(response);
