@@ -9,25 +9,8 @@
 var activeSecondLevelObject = null;
 var activeSecondLevelController = null;
 
-function createOctoSlackModal() {
-    // Create elements
-    var octoSlackModal = document.getElementById("octo_slack_modal");
-
-    var modalContent = document.createElement("DIV");
-    modalContent.className = "octo_slack_modal_content";
-    octoSlackModal.appendChild(modalContent);
-
-    var iframe = document.createElement("IFRAME");
-    modalContent.appendChild(iframe);
-
-    // Set up the click event for the modal
-    $(".printer_icon").click(function(){
-        var printer_id = this.id.replace("printer_icon_", "");
-        var printer = getPrinterByPrinterId(printer_id);
-        iframe.src = printer.octoprintUrl;
-        octoSlackModal.style.display = "block";
-    });
-}
+// Set snapshot update interval
+window.setInterval(updateSnapshotViews, 3000);
 
 function createNavBar() {
     var navBar = document.getElementById("nav_bar");
@@ -38,6 +21,21 @@ function createNavBar() {
     heroLogo.src = "img/uofulogo.png";
 
     navBar.appendChild(heroLogo);
+}
+
+function createOctoSlackModal() {
+    // Create elements
+    var octoSlackModal = document.getElementById("octo_slack_modal");
+
+    var modalContent = document.createElement("DIV");
+    modalContent.className = "octo_slack_modal_content";
+    modalContent.id = "octo_slack_modal_content";
+    octoSlackModal.appendChild(modalContent);
+
+    var iframe = document.createElement("IFRAME");
+    iframe.id = "octo_slack_modal_iframe";
+
+    modalContent.appendChild(iframe);
 }
 
 function createSnapshotModal() {
@@ -55,32 +53,65 @@ function createSnapshotModal() {
     modalContent.appendChild(snapshotImage);
 }
 
-function displaySnapshotModal(printer_id) {
+function displayOctoSlackModal(printerId) {
+    // Set the modal iframe source to be the appropriate URL
+    var printer = getPrinterByPrinterId(printerId);
+    var modalIframe = document.getElementById("octo_slack_modal_iframe");
+    modalIframe.src = printer.octoprintUrl;
+
+    // Display the modal
+    var octoSlackModalContent = document.getElementById("octo_slack_modal_content");
+    octoSlackModalContent.style.display = "block";
+    var octoSlackModal = document.getElementById("octo_slack_modal");
+    octoSlackModal.style.display = "block";
+
+    // Keep the snapshots from updating while the modal is active
+    shouldUpdateSnapshots = false;
+}
+
+function displaySnapshotModal(printerId) {
     // Rotate the container to match the set rotation of the static snapshot
-    var snapshot = document.getElementById("snapshot_" + printer_id);
+    var snapshot = document.getElementById("snapshot_" + printerId);
     var angle = snapshot.title; //Title contains angle
     var modalContent = document.getElementById("snapshot_modal_content");
     modalContent.style.webkitTransform = "rotate("+angle+"deg)";
 
     // Set the modal image source to be the appropriate webcam feed
-    var printer = getPrinterByPrinterId(printer_id);
+    var printer = getPrinterByPrinterId(printerId);
     var modalImage = document.getElementById("snapshot_modal_image");
     modalImage.src = printer.octoprintWebcamLiveUrl;
 
     // Display the modal
     var snapshotModal = document.getElementById("snapshot_modal");
     snapshotModal.style.display = "block";
+    modalContent.style.display = "inline-block";
 
     // Keep the snapshots from updating while the modal is active
     shouldUpdateSnapshots = false;
 }
 
-function createWindowEventListeners() {
+function createSecondLevelObjectEventListeners() {
     window.onclick = function(event) {
         var clickedObject = event.target;
 
+        /* ACTIVE SECOND-LEVEL OBJECT */
+        if (activeSecondLevelObject !== null &&
+            clickedObject !== activeSecondLevelObject &&
+            !$.contains(activeSecondLevelObject, clickedObject) &&
+            clickedObject !== activeSecondLevelController)
+        {
+            activeSecondLevelObject.style.display = "none";
+            activeSecondLevelObject = null;
+            activeSecondLevelController = null;
+
+            if (clickedObject.id == "snapshot_modal" || clickedObject.id == "octo_slack_modal") {
+                clickedObject.style.display = "none";
+                window.stop();  // This stops the stream so that it doesn't keep running in the background
+                shouldUpdateSnapshots = true; // Restart the snapshot updates
+            }
+        }
         /* BUTTONS */
-        if (clickedObject.className.includes("settings_icon")) {
+        else if (clickedObject.className.includes("settings_icon")) {
             var printerId = event.target.id.replace("settings_icon", "");
             var overlay = document.getElementById("settings_overlay" + printerId);
 
@@ -95,58 +126,37 @@ function createWindowEventListeners() {
                 activeSecondLevelController = clickedObject;
             }
         }
-        // else if(clickedObject.className.includes("info_icon")) {
-        //
-        // }
+        else if (clickedObject.className.includes("info_icon")) {
+            var printerId = event.target.id.replace("info_icon", "");
+            var overlay = document.getElementById("info_overlay" + printerId);
 
-        /* ACTIVE SECOND-LEVEL OBJECT */
-        if (activeSecondLevelObject !== null &&
-            clickedObject !== activeSecondLevelObject &&
-            !$.contains(activeSecondLevelObject, clickedObject) &&
-            clickedObject !== activeSecondLevelController)
-        {
-            activeSecondLevelObject.style.display = "none";
-            activeSecondLevelObject = null;
-            activeSecondLevelController = null;
-
-            if (clickedObject.id == "snapshot_modal" || clickedObject.id == "octo_slack_modal") {
-                window.stop();  // This stops the stream so that it doesn't keep running in the background
-                shouldUpdateSnapshots = true; // Restart the snapshot updates
+            if (clickedObject === activeSecondLevelController) {
+                overlay.style.display = "none";
+                activeSecondLevelController = null;
+                activeSecondLevelObject = null;
+            }
+            else {
+                overlay.style.display = "block";
+                activeSecondLevelObject = overlay;
+                activeSecondLevelController = clickedObject;
             }
         }
-
         /* MODALS */
-        // If the user clicks anywhere outside the modals, close it
-        // if (clickedObjectId == "snapshot_modal_content" || clickedObjectId == "octo_slack_modal_content") {
-        //     event.target.style.display = "none";
-        //     window.stop();  // This stops the stream so that it doesn't keep running in the background
-        //
-        //     // Restart the snapshot updates
-        //     shouldUpdateSnapshots = true;
-        // }
-        //
-        // /* OVERLAYS */
-        // if (clickedObjectId == "info_overlay" || clickedObjectId == "settings_overlay") {
-        //     event.target.style.display = "none";
-        //     window.stop();  // This stops the stream so that it doesn't keep running in the background
-        //
-        //     // Restart the snapshot updates
-        //     shouldUpdateSnapshots = true;
-        // }
-        // If the user clicks anywhere outside the info button, close it
-        // if (!clickedObjectClass.includes("info_overlay") && !clickedObjectClass.includes("info_icon")){
-        //     var overlays = document.getElementsByClassName("overlay");
-        //     if(overlays !== undefined) {
-        //         for(var i=0; i<overlays.length; i++) {
-        //             overlays.item(i).style.display = "none";
-        //         }
-        //     }
-        // }
-
+        // This is a button, but the controller is unclickable while it is up.
+        // It counts as a modal
+        else if (clickedObject.className.includes("printer_icon")) {
+            var printerId = event.target.id.replace("printer_icon_", "");
+            activeSecondLevelObject = document.getElementById("octo_slack_modal_content");
+            activeSecondLevelController = clickedObject;
+            displayOctoSlackModal(Number(printerId));
+        }
+        else if (clickedObject.className.includes("snapshot")) {
+            var printerId = event.target.id.replace("snapshot_", "");
+            activeSecondLevelObject = document.getElementById("snapshot_modal_content");
+            activeSecondLevelController = clickedObject;
+            displaySnapshotModal(Number(printerId));
+        }
     };
-
-    // Set snapshot update interval
-    window.setInterval(updateSnapshotViews, 3000);
 }
 
 function updateSnapshotViews() {

@@ -46,10 +46,7 @@ printerModule.prototype.createPrinterModule = function(printer) {
     snapshot.id = "snapshot_" + Number(module.id);
     snapshot.src = printer.octoprintWebcamSnapshotUrl;
     snapshot.alt = printerName.innerHTML;
-    snapshot.title = "0";
-    snapshot.onclick = function(){
-        displaySnapshotModal(Number(module.id));
-    };
+    snapshot.title = "0";   // Used for rotation calculation
     snapshotWrapper.appendChild(snapshot);
 
     var infoOverlay = this.createInfoOverlay(Number(module.id));  // Overlay that covers snapshot
@@ -74,36 +71,11 @@ printerModule.prototype.createPrinterModule = function(printer) {
     infoIcon.className = "icon info_icon";
     infoIcon.id = "info_icon" + Number(module.id);
     infoIcon.src = "img/info_icon.png";
-    infoIcon.onclick = function(){
-        var printerId = this.id.replace("info_icon", "");
-        var overlay = document.getElementById("info_overlay" + printerId);
-        if (overlay.style.display == "block") {
-            overlay.style.display = "none";
-        }
-        else {
-            overlay.style.display = "block";
-            activeSecondLevelObject = overlay;
-            activeSecondLevelController = this;
-        }
-
-    };
 
     var settingsIcon = document.createElement("IMG");
     settingsIcon.className = "icon settings_icon";
     settingsIcon.id = "settings_icon" + Number(module.id);
     settingsIcon.src = "img/gear_icon.png";
-    // settingsIcon.onclick = function(){
-    //     var printerId = this.id.replace("settings_icon", "");
-    //     var overlay = document.getElementById("settings_overlay" + printerId);
-    //     if (overlay.style.display == "block") {
-    //         overlay.style.display = "none";
-    //     }
-    //     else {
-    //         overlay.style.display = "block";
-    //         activeSecondLevelObject = overlay;
-    //         activeSecondLevelController = this;
-    //     }
-    // };
 
     var status = document.createElement("DIV");
     status.className = "status";

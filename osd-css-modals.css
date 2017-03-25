@@ -15,6 +15,7 @@
 /* Modal Content/Box */
 .octo_slack_modal_content {
     position: relative;
+    display: block;
     background-color: #fefefe;
     margin: 100px auto;
     padding: 0;
