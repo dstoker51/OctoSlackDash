@@ -29,20 +29,20 @@
         </div><!--./shell-->
 
         <script>
-            var blackMamba = new printer("Black Mamba", "Rostock Max v2", 1, true);
-            var mobyDick = new printer("Moby Dick", "Rostock Max v2", 1, true);
-            var printrbot = new printer("Printrbot", "PrintrBot Simple Metal", 1, false);
-            var stu = new printer("Stu i3", "Wanhao Duplicator i3", 1, true);
-            // var ultimaker = new printer("Ultimaker", "Ultimaker 2+", 1, true);
+            var blackMamba = new printer("Black Mamba", "Rostock Max v2", 1, true, undefined, "octopi1key");
+            var mobyDick = new printer("Moby Dick", "Rostock Max v2", 1, true, undefined, "0200628F557F4FF8B6FE08697140284F");
+            var printrbot = new printer("Printrbot", "PrintrBot Simple Metal", 1, false, undefined, "55909A86E92C49B6BF8FBAB5C61726C3");
+            var stu = new printer("Stu i3", "Wanhao Duplicator i3", 1, true, undefined, "octopi4apikey");
+            // var ultimaker = new printer("Ultimaker", "Ultimaker 2+", 1, true, "http://www.darinlstoker.com:7000", "C87CDC97239244C0BF2711B5103974C8");
 
             OctoPrint.options.baseurl = "http://155.97.12.124";
             OctoPrint.options.apikey = "octopi4apikey";
 
-            // OctoPrint.socket.connect();
-            //
-            // OctoPrint.socket.onMessage("test", function(message){
-            //     document.getElementById('test_area').innerHTML = response;
-            // });
+            OctoPrint.socket.connect();
+
+            OctoPrint.socket.onMessage("current", function(message){
+                document.getElementById('test_area').innerHTML = message.data.job.file.name;
+            });
 
             createNavBar();
             createOctoSlackModal();
