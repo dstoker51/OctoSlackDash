@@ -35,38 +35,38 @@
             var stu = new printer("Stu i3", "Wanhao Duplicator i3", 1, true, undefined, "octopi4apikey");
             // var ultimaker = new printer("Ultimaker", "Ultimaker 2+", 1, true, "http://www.darinlstoker.com:7000", "C87CDC97239244C0BF2711B5103974C8");
 
-            OctoPrint.options.baseurl = "http://155.97.12.124";
-            OctoPrint.options.apikey = "octopi4apikey";
-
-            OctoPrint.socket.connect();
-
-            OctoPrint.socket.onMessage("current", function(message){
-                document.getElementById('test_area').innerHTML = message.data.job.file.name;
-            });
+            // OctoPrint.options.baseurl = "http://155.97.12.124";
+            // OctoPrint.options.apikey = "octopi4apikey";
+            //
+            // OctoPrint.socket.connect();
+            //
+            // OctoPrint.socket.onMessage("current", function(message){
+            //     document.getElementById('test_area').innerHTML = message.data.temps["0"];
+            // });
 
             createNavBar();
             createOctoSlackModal();
             createSnapshotModal();
             createSecondLevelObjectEventListeners();
 
-            $(document).ready(function(){
-                $("button").click(function(){
-                    //stu.requestBatchInfo();
-                    OctoPrint.job.get()
-                        .done(function(data, status){
-                            stu.printerModule.updatePrinterStatus(data);
-                            var printerState = data.state;
-                            if(printerState == "Operational") {
-                                stu.printerModule.DOM.className = "printer_module idle";
-                            }
-                            document.getElementById("test_area").innerHTML = data.state;
-                        })
-                        .fail(function(){
-                            console.error("Test OctoPrint Javascript API request failed.");
-                            stu.printerModule.DOM.className = "printer_module error";
-                        });
-                });
-            });
+            // $(document).ready(function(){
+            //     $("button").click(function(){
+            //         //stu.requestBatchInfo();
+            //         OctoPrint.job.get()
+            //             .done(function(data, status){
+            //                 stu.printerModule.updatePrinterStatus(data);
+            //                 var printerState = data.state;
+            //                 if(printerState == "Operational") {
+            //                     stu.printerModule.DOM.className = "printer_module idle";
+            //                 }
+            //                 document.getElementById("test_area").innerHTML = data.state;
+            //             })
+            //             .fail(function(){
+            //                 console.error("Test OctoPrint Javascript API request failed.");
+            //                 stu.printerModule.DOM.className = "printer_module error";
+            //             });
+            //     });
+            // });
 
         </script>
         <button>Send an HTTP GET request</button>
