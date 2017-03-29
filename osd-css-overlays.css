@@ -20,8 +20,6 @@
 /* Position the content inside the overlay */
 .info_overlay_content {
     position: relative;
-    margin-top: 30px; /* 30px top margin to avoid conflict with the close button on smaller screens */
-    text-align: center; /* Centered text/links */
     -webkit-animation-name: slideIn;
     -webkit-animation-duration: 0.3s;
     -moz-animation-name: slideIn;
@@ -30,19 +28,17 @@
     animation-duration: 0.3s;
 }
 
-/* The navigation links inside the overlay */
-.info_overlay_content a {
+.info_overlay_content .text_line {
+    display: block;
     padding: 8px;
-    text-decoration: none;
-    font-size: 36px;
-    color: #818181;
-    display: block; /* Display block instead of inline */
-    transition: 0.3s; /* Transition effects on hover (color) */
+    overflow:hidden;
 }
 
-/* When you mouse over the navigation links, change their color */
-.info_overlay_content a:hover, .info_overlay_content a:focus {
-    color: #f1f1f1;
+.info_overlay_content .text_line div {
+    display:inline-block;
+    margin-right: 3px;
+    font-size: 12px;
+    color: #818181;
 }
 
 .settings_overlay {

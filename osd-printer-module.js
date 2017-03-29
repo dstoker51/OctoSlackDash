@@ -119,7 +119,9 @@ printerModule.prototype.updateProgressBar = function(value) {
 };
 
 printerModule.prototype.updateJobName = function(value) {
+    if(value !== null) {
 
+    }
 };
 
 printerModule.prototype.updateTimeRemaining = function(value) {
@@ -127,8 +129,17 @@ printerModule.prototype.updateTimeRemaining = function(value) {
 };
 
 printerModule.prototype.updateProgress = function(value) {
-    //TODO progress numbers in status
-    this.updateProgressBar(value.completion);
+
+    if (value !== null) {
+        // Update status overlay values
+        var textArea = document.getElementById("print_time_value_" + Number(this.id));
+        textArea.innerHTML = value.printTime;
+        textArea = document.getElementById("print_time_left_value_" + Number(this.id));
+        textArea.innerHTML = value.printTimeLeft;
+
+        // Update progress bar
+        this.updateProgressBar(value.completion);
+    }
 };
 
 printerModule.prototype.updateBedTemp = function(value) {
@@ -139,23 +150,20 @@ printerModule.prototype.updateExtruderTemps = function(value) {
 
 };
 
-printerModule.prototype.updatePrinterStatus = function(response) {
-    // Selectively update status according to data in response
-    if (response.hasOwnProperty("job_name")) {
-        this.updateJobName(response.job_name);
+printerModule.prototype.updatePrinterStatus = function(message) {
+    this.updateJobName(message.data.job.file.name);
+    if (message.hasOwnProperty("time_remaining")) {
+        this.updateTimeRemaining(message.time_remaining);
     }
-    if (response.hasOwnProperty("time_remaining")) {
-        this.updateTimeRemaining(response.time_remaining);
-    }
-    if (response.hasOwnProperty("progress")) {
-        this.updateProgress(response.progress);
+    if (message.data.progress !== null) {
+        this.updateProgress(message.data.progress);
     }
 
-    if (response.hasOwnProperty("extruder_temps")) {
-        this.updateExtruderTemps(response.extruder_temps);
+    if (message.hasOwnProperty("extruder_temps")) {
+        this.updateExtruderTemps(message.extruder_temps);
 
         if (getPrinterByModuleId(this.id).hasHeatedBed)
-            this.updateBedTemp(response.extruder_temps);
+            this.updateBedTemp(message.extruder_temps);
     }
 };
 
@@ -176,24 +184,87 @@ printerModule.prototype.createInfoOverlay = function(id) {
     var overlayContent = document.createElement("DIV");
     overlayContent.className = "info_overlay_content";
 
-    var link1 = document.createElement("A");
-    var linkText = document.createTextNode("About");
-    link1.appendChild(linkText);
-    var link2 = document.createElement("A");
-    linkText = document.createTextNode("Services");
-    link2.appendChild(linkText);
-    var link3 = document.createElement("A");
-    linkText = document.createTextNode("Clients");
-    link3.appendChild(linkText);
-    var link4 = document.createElement("A");
-    linkText = document.createTextNode("Contact");
-    link4.appendChild(linkText);
+    /*************************************************/
+    var overlayTextLine = document.createElement("DIV");
+    overlayTextLine.className = "text_line";
+    overlayContent.append(overlayTextLine);
 
-    // Structure them
-    overlayContent.appendChild(link1);
-    overlayContent.appendChild(link2);
-    overlayContent.appendChild(link3);
-    overlayContent.appendChild(link4);
+    var stateKey = document.createElement("DIV");
+    stateKey.className = "state_key";
+    stateKey.id = "state_key_" + id;
+    stateKey.innerHTML = "State: ";
+    overlayTextLine.append(stateKey);
+
+    var stateValue = document.createElement("DIV");
+    stateValue.className = "state_value";
+    stateValue.id = "state_value_" + id;
+    overlayTextLine.append(stateValue);
+
+    /*************************************************/
+    overlayTextLine = document.createElement("DIV");
+    overlayTextLine.className = "text_line";
+    overlayContent.append(overlayTextLine);
+
+    var fileKey = document.createElement("DIV");
+    fileKey.className = "file_key";
+    fileKey.id = "file_key_" + id;
+    fileKey.innerHTML = "File: ";
+    overlayTextLine.append(fileKey);
+
+    var fileValue = document.createElement("DIV");
+    stateValue.className = "file_value";
+    stateValue.id = "file_value_" + id;
+    overlayTextLine.append(fileValue);
+
+    /*************************************************/
+    overlayTextLine = document.createElement("DIV");
+    overlayTextLine.className = "text_line";
+    overlayContent.append(overlayTextLine);
+
+    var approxTotalPrintTimeKey = document.createElement("DIV");
+    approxTotalPrintTimeKey.className = "approx_total_print_time_key";
+    approxTotalPrintTimeKey.id = "approx_total_print_time_key_" + id;
+    approxTotalPrintTimeKey.innerHTML = "Approx Total Print Time: ";
+    overlayTextLine.append(approxTotalPrintTimeKey);
+
+    var approxTotalPrintTimeValue = document.createElement("DIV");
+    approxTotalPrintTimeValue.className = "approx_total_print_time_value";
+    approxTotalPrintTimeValue.id = "approx_total_print_time_value_" + id;
+    overlayTextLine.append(approxTotalPrintTimeValue);
+
+    /*************************************************/
+    overlayTextLine = document.createElement("DIV");
+    overlayTextLine.className = "text_line";
+    overlayContent.append(overlayTextLine);
+
+    var printTimeKey = document.createElement("DIV");
+    printTimeKey.className = "print_time_key";
+    printTimeKey.id = "print_time_key_" + id;
+    printTimeKey.innerHTML = "Print Time: ";
+    overlayTextLine.append(printTimeKey);
+
+    var printTimeValue = document.createElement("DIV");
+    printTimeValue.className = "print_time_value";
+    printTimeValue.id = "print_time_value_" + id;
+    overlayTextLine.append(printTimeValue);
+
+    /*************************************************/
+    overlayTextLine = document.createElement("DIV");
+    overlayTextLine.className = "text_line";
+    overlayContent.append(overlayTextLine);
+
+    var printTimeLeftKey = document.createElement("DIV");
+    printTimeLeftKey.className = "print_time_left_key";
+    printTimeLeftKey.id = "print_time_left_key_" + id;
+    printTimeLeftKey.innerHTML = "Print Time Left: ";
+    overlayTextLine.append(printTimeLeftKey);
+
+    var printTimeLeftValue = document.createElement("DIV");
+    printTimeLeftValue.className = "print_time_left_value";
+    printTimeLeftValue.id = "print_time_left_value_" + id;
+    overlayTextLine.append(printTimeLeftValue);
+
+    // Structure it
     infoOverlay.appendChild(overlayContent);
 
     return infoOverlay;

@@ -65,32 +65,32 @@ var printer = function (name, type, numExtruders, hasHeatedBed, nonStandardUrl, 
     }
 
     addPrinter(this);
-    // console.log(printers);
 };
 
 // Printer Function Definitions
 printer.prototype.onSocketConnect = function(printer, message) {
-    console.log(this.name + " socket connected successfully.");
+    // console.log(this.name + " socket connected successfully.");
 };
 
 printer.prototype.onSocketReceiveCurrent = function(printer, message) {
-    console.log(this.name + " received a current message.");
+    // console.log(this.name + " received a current message.");
+    this.printerModule.updatePrinterStatus(message);
 };
 
 printer.prototype.onSocketReceiveHistory = function(printer, message) {
-    console.log(this.name + " received a history message.");
+    // console.log(this.name + " received a history message.");
 };
 
 printer.prototype.onSocketReceiveEvent = function(printer, message) {
-    console.log(this.name + " received an event message.");
+    // console.log(this.name + " received an event message.");
 };
 
 printer.prototype.onSocketReceiveSlicingProgress = function(printer, message) {
-    console.log(this.name + " received a slicing progress message.");
+    // console.log(this.name + " received a slicing progress message.");
 };
 
 printer.prototype.onSocketReceivePluginMessage = function(printer, message) {
-    console.log(this.name + " received a plugin message.");
+    // console.log(this.name + " received a plugin message.");
 };
 
 // printer.prototype.requestBatchInfo = function() {
