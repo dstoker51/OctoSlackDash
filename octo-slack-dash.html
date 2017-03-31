@@ -13,6 +13,7 @@
         <script src="osd-printer-module.js"></script>
         <script src="sockjs.min.js"></script>
         <script src="packed-client.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
         <link href="osd-css.css" rel="stylesheet">
         <link href="osd-css-modals.css" rel="stylesheet">
@@ -20,7 +21,6 @@
         <link href="osd-css-printer-modules.css" rel="stylesheet">
     </head>
     <body>
-        <div id="test_area"></div>
         <div class="nav_bar" id="nav_bar"></div>
         <div class="octo_slack_modal" id="octo_slack_modal"></div>
         <div class="snapshot_modal" id="snapshot_modal"></div>
@@ -33,42 +33,12 @@
             var mobyDick = new printer("Moby Dick", "Rostock Max v2", 1, true, undefined, "0200628F557F4FF8B6FE08697140284F");
             var printrbot = new printer("Printrbot", "PrintrBot Simple Metal", 1, false, undefined, "55909A86E92C49B6BF8FBAB5C61726C3");
             var stu = new printer("Stu i3", "Wanhao Duplicator i3", 1, true, undefined, "octopi4apikey");
-            // var ultimaker = new printer("Ultimaker", "Ultimaker 2+", 1, true, "http://www.darinlstoker.com:7000", "C87CDC97239244C0BF2711B5103974C8");
-
-            // OctoPrint.options.baseurl = "http://155.97.12.124";
-            // OctoPrint.options.apikey = "octopi4apikey";
-            //
-            // OctoPrint.socket.connect();
-            //
-            // OctoPrint.socket.onMessage("current", function(message){
-            //     document.getElementById('test_area').innerHTML = message.data.temps["0"];
-            // });
 
             createNavBar();
             createOctoSlackModal();
             createSnapshotModal();
             createSecondLevelObjectEventListeners();
 
-            // $(document).ready(function(){
-            //     $("button").click(function(){
-            //         //stu.requestBatchInfo();
-            //         OctoPrint.job.get()
-            //             .done(function(data, status){
-            //                 stu.printerModule.updatePrinterStatus(data);
-            //                 var printerState = data.state;
-            //                 if(printerState == "Operational") {
-            //                     stu.printerModule.DOM.className = "printer_module idle";
-            //                 }
-            //                 document.getElementById("test_area").innerHTML = data.state;
-            //             })
-            //             .fail(function(){
-            //                 console.error("Test OctoPrint Javascript API request failed.");
-            //                 stu.printerModule.DOM.className = "printer_module error";
-            //             });
-            //     });
-            // });
-
         </script>
-        <button>Send an HTTP GET request</button>
     </body>
 </html>

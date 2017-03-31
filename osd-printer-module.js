@@ -47,16 +47,19 @@ printerModule.prototype.createPrinterModule = function(printer) {
     snapshot.src = printer.octoprintWebcamSnapshotUrl;
     snapshot.alt = printerName.innerHTML;
     snapshot.title = "0";   // Used for rotation calculation
+
+    // Show the error image if the connection can't be established
+    snapshot.onerror = function() {
+        snapshot.src = "img/offline.png";
+    };
+
     snapshotWrapper.appendChild(snapshot);
 
-    var infoOverlay = this.createInfoOverlay(Number(module.id));  // Overlay that covers snapshot
+    var infoOverlay = this.createInfoOverlay(Number(module.id), printer);  // Overlay that covers snapshot
     snapshotWrapper.appendChild(infoOverlay);
+
     var settingsOverlay = this.createSettingsOverlay(Number(module.id));  // Overlay that covers snapshot
     snapshotWrapper.appendChild(settingsOverlay);
-
-    // snapshot.onerror = function() {
-    //     snapshot.src = "img/offline.png";
-    // };
 
     var toolbar = document.createElement("DIV");
     toolbar.className = "toolbar";
@@ -87,11 +90,11 @@ printerModule.prototype.createPrinterModule = function(printer) {
     progressBar.className = "progress-bar progress-bar-danger progress-bar-striped active";
     progressBar.id = "progress_bar_" + Number(module.id);
     progressBar.role = "progressbar";
-    $(progressBar).attr("aria-valuenow", "30");
+    $(progressBar).attr("aria-valuenow", "0");
     $(progressBar).attr("aria-valuemin", "0");
     $(progressBar).attr("aria-valuemax", "100");
-    $(progressBar).attr("style", "width:30%");
-    progressBar.innerHTML = "30%";
+    $(progressBar).attr("style", "width:0%");
+    progressBar.innerHTML = "0%";
     progressContainer.appendChild(progressBar);
     status.appendChild(progressContainer);
 
@@ -120,25 +123,60 @@ printerModule.prototype.updateProgressBar = function(value) {
 
 printerModule.prototype.updateJobName = function(value) {
     if(value !== null) {
-
+        var textArea = document.getElementById("file_value_" + Number(this.id));
+        textArea.innerHTML = value;
     }
 };
 
-printerModule.prototype.updateTimeRemaining = function(value) {
-
+printerModule.prototype.updatePrintApproximation = function(value) {
+    if(value !== null) {
+        var textArea = document.getElementById("approx_total_print_time_value_" + Number(this.id));
+        textArea.innerHTML = String(value).toHHMM();
+    }
 };
 
 printerModule.prototype.updateProgress = function(value) {
+    var textArea;
 
-    if (value !== null) {
-        // Update status overlay values
-        var textArea = document.getElementById("print_time_value_" + Number(this.id));
-        textArea.innerHTML = value.printTime;
+    // Update status overlay views
+    if (value.printTime !== null) {
+        textArea = document.getElementById("print_time_value_" + Number(this.id));
+        textArea.innerHTML = String(value.printTime).toHHMM();
+    }
+    if (value.printTimeLeft !== null) {
         textArea = document.getElementById("print_time_left_value_" + Number(this.id));
-        textArea.innerHTML = value.printTimeLeft;
+        textArea.innerHTML = String(value.printTimeLeft).toHHMM();
+    }
 
-        // Update progress bar
-        this.updateProgressBar(value.completion);
+    // Update progress bar
+    if (value.completion !== null) {
+        this.updateProgressBar(value.completion.toFixed(0));    // Remove decimals
+    }
+};
+
+printerModule.prototype.updateState = function(state) {
+    // Update state text
+    if(state.text !== null) {
+        var textArea = document.getElementById("state_value_" + Number(this.id));
+        textArea.innerHTML = state.text;
+    }
+    // Update printer module color
+    if(state.flags !== null) {
+        if(state.flags.paused === true) {
+            this.DOM.className = "printer_module paused";
+        }
+        else if(state.flags.printing === true) {
+            this.DOM.className = "printer_module printing";
+        }
+        else if(state.flags.error === true) {
+            this.DOM.className = "printer_module error";
+        }
+        else if(state.flags.ready === true) {
+            this.DOM.className = "printer_module idle";
+        }
+        else {
+            this.DOM.className = "printer_module offline";
+        }
     }
 };
 
@@ -151,13 +189,10 @@ printerModule.prototype.updateExtruderTemps = function(value) {
 };
 
 printerModule.prototype.updatePrinterStatus = function(message) {
+    this.updateState(message.data.state);
     this.updateJobName(message.data.job.file.name);
-    if (message.hasOwnProperty("time_remaining")) {
-        this.updateTimeRemaining(message.time_remaining);
-    }
-    if (message.data.progress !== null) {
-        this.updateProgress(message.data.progress);
-    }
+    this.updatePrintApproximation(message.data.job.estimatedPrintTime);
+    this.updateProgress(message.data.progress);
 
     if (message.hasOwnProperty("extruder_temps")) {
         this.updateExtruderTemps(message.extruder_temps);
@@ -175,11 +210,11 @@ printerModule.prototype.updateSnapshotView = function() {
     }
 };
 
-printerModule.prototype.createInfoOverlay = function(id) {
+printerModule.prototype.createInfoOverlay = function(moduleId, printer) {
     // Create elements
     var infoOverlay = document.createElement("DIV");
     infoOverlay.className = "overlay info_overlay";
-    infoOverlay.id = "info_overlay" + id;
+    infoOverlay.id = "info_overlay" + moduleId;
 
     var overlayContent = document.createElement("DIV");
     overlayContent.className = "info_overlay_content";
@@ -189,15 +224,26 @@ printerModule.prototype.createInfoOverlay = function(id) {
     overlayTextLine.className = "text_line";
     overlayContent.append(overlayTextLine);
 
+    var printerType = document.createElement("DIV");
+    printerType.className = "printer_type_value";
+    printerType.id = "printer_type_value_" + moduleId;
+    printerType.innerHTML = "Type: " + printer.type;
+    overlayTextLine.append(printerType);
+
+    /*************************************************/
+    overlayTextLine = document.createElement("DIV");
+    overlayTextLine.className = "text_line";
+    overlayContent.append(overlayTextLine);
+
     var stateKey = document.createElement("DIV");
     stateKey.className = "state_key";
-    stateKey.id = "state_key_" + id;
+    stateKey.id = "state_key_" + moduleId;
     stateKey.innerHTML = "State: ";
     overlayTextLine.append(stateKey);
 
     var stateValue = document.createElement("DIV");
     stateValue.className = "state_value";
-    stateValue.id = "state_value_" + id;
+    stateValue.id = "state_value_" + moduleId;
     overlayTextLine.append(stateValue);
 
     /*************************************************/
@@ -207,13 +253,13 @@ printerModule.prototype.createInfoOverlay = function(id) {
 
     var fileKey = document.createElement("DIV");
     fileKey.className = "file_key";
-    fileKey.id = "file_key_" + id;
+    fileKey.id = "file_key_" + moduleId;
     fileKey.innerHTML = "File: ";
     overlayTextLine.append(fileKey);
 
     var fileValue = document.createElement("DIV");
-    stateValue.className = "file_value";
-    stateValue.id = "file_value_" + id;
+    fileValue.className = "file_value";
+    fileValue.id = "file_value_" + moduleId;
     overlayTextLine.append(fileValue);
 
     /*************************************************/
@@ -223,13 +269,13 @@ printerModule.prototype.createInfoOverlay = function(id) {
 
     var approxTotalPrintTimeKey = document.createElement("DIV");
     approxTotalPrintTimeKey.className = "approx_total_print_time_key";
-    approxTotalPrintTimeKey.id = "approx_total_print_time_key_" + id;
+    approxTotalPrintTimeKey.id = "approx_total_print_time_key_" + moduleId;
     approxTotalPrintTimeKey.innerHTML = "Approx Total Print Time: ";
     overlayTextLine.append(approxTotalPrintTimeKey);
 
     var approxTotalPrintTimeValue = document.createElement("DIV");
     approxTotalPrintTimeValue.className = "approx_total_print_time_value";
-    approxTotalPrintTimeValue.id = "approx_total_print_time_value_" + id;
+    approxTotalPrintTimeValue.id = "approx_total_print_time_value_" + moduleId;
     overlayTextLine.append(approxTotalPrintTimeValue);
 
     /*************************************************/
@@ -239,13 +285,13 @@ printerModule.prototype.createInfoOverlay = function(id) {
 
     var printTimeKey = document.createElement("DIV");
     printTimeKey.className = "print_time_key";
-    printTimeKey.id = "print_time_key_" + id;
+    printTimeKey.id = "print_time_key_" + moduleId;
     printTimeKey.innerHTML = "Print Time: ";
     overlayTextLine.append(printTimeKey);
 
     var printTimeValue = document.createElement("DIV");
     printTimeValue.className = "print_time_value";
-    printTimeValue.id = "print_time_value_" + id;
+    printTimeValue.id = "print_time_value_" + moduleId;
     overlayTextLine.append(printTimeValue);
 
     /*************************************************/
@@ -255,13 +301,13 @@ printerModule.prototype.createInfoOverlay = function(id) {
 
     var printTimeLeftKey = document.createElement("DIV");
     printTimeLeftKey.className = "print_time_left_key";
-    printTimeLeftKey.id = "print_time_left_key_" + id;
+    printTimeLeftKey.id = "print_time_left_key_" + moduleId;
     printTimeLeftKey.innerHTML = "Print Time Left: ";
     overlayTextLine.append(printTimeLeftKey);
 
     var printTimeLeftValue = document.createElement("DIV");
     printTimeLeftValue.className = "print_time_left_value";
-    printTimeLeftValue.id = "print_time_left_value_" + id;
+    printTimeLeftValue.id = "print_time_left_value_" + moduleId;
     overlayTextLine.append(printTimeLeftValue);
 
     // Structure it

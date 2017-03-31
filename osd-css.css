@@ -1,6 +1,8 @@
 body {
     background-color: black;
     background-color: rgb(40, 40, 40);
+    font-family: 'Roboto', sans-serif;
+    color: white;
 }
 
 .nav_bar {

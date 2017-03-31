@@ -37,8 +37,7 @@
 .info_overlay_content .text_line div {
     display:inline-block;
     margin-right: 3px;
-    font-size: 12px;
-    color: #818181;
+    font-size: 16px;
 }
 
 .settings_overlay {
@@ -60,22 +59,7 @@
     align-items: center;
     -webkit-align-items: center;
     width: 100%;
-    height: 50px;
-}
-
-/* The navigation links inside the overlay */
-.settings_overlay_content a {
-    padding: 8px;
-    text-decoration: none;
-    font-size: 36px;
-    color: #818181;
-    display: block; /* Display block instead of inline */
-    transition: 0.3s; /* Transition effects on hover (color) */
-}
-
-/* When you mouse over the navigation links, change their color */
-.settings_overlay_content a:hover, .settings_overlay_content a:focus {
-    color: #f1f1f1;
+    height: 100%;
 }
 
 /* Add Animation */

@@ -69,7 +69,7 @@ var printer = function (name, type, numExtruders, hasHeatedBed, nonStandardUrl, 
 
 // Printer Function Definitions
 printer.prototype.onSocketConnect = function(printer, message) {
-    // console.log(this.name + " socket connected successfully.");
+    console.log(this.name + " socket connected successfully.");
 };
 
 printer.prototype.onSocketReceiveCurrent = function(printer, message) {
