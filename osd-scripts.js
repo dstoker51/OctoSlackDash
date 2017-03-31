@@ -67,6 +67,25 @@ function displayOctoSlackModal(printerId) {
 
     // Keep the snapshots from updating while the modal is active
     shouldUpdateSnapshots = false;
+
+}
+
+function hideOctoSlackModal() {
+    // Stop any large images or streams
+    window.stop();
+
+    // Set the modal iframe source to be the appropriate URL
+    var modalIframe = document.getElementById("octo_slack_modal_iframe");
+    modalIframe.src = "about:blank";
+
+    // Display the modal
+    var octoSlackModalContent = document.getElementById("octo_slack_modal_content");
+    octoSlackModalContent.style.display = "none";
+    var octoSlackModal = document.getElementById("octo_slack_modal");
+    octoSlackModal.style.display = "none";
+
+    // Keep the snapshots from updating while the modal is active
+    shouldUpdateSnapshots = true;
 }
 
 function displaySnapshotModal(printerId) {
@@ -90,6 +109,23 @@ function displaySnapshotModal(printerId) {
     shouldUpdateSnapshots = false;
 }
 
+function hideSnapshotModal() {
+    // Stop any large images or streams
+    window.stop();
+    
+    var modalImage = document.getElementById("snapshot_modal_image");
+    modalImage.src = "img/offline.png";
+
+    // Display the modal
+    var snapshotModal = document.getElementById("snapshot_modal");
+    snapshotModal.style.display = "none";
+    var modalContent = document.getElementById("snapshot_modal_content");
+    modalContent.style.display = "none";
+
+    // Keep the snapshots from updating while the modal is active
+    shouldUpdateSnapshots = true;
+}
+
 function createSecondLevelObjectEventListeners() {
     window.onclick = function(event) {
         var clickedObject = event.target;
@@ -104,10 +140,11 @@ function createSecondLevelObjectEventListeners() {
             activeSecondLevelObject = null;
             activeSecondLevelController = null;
 
-            if (clickedObject.id == "snapshot_modal" || clickedObject.id == "octo_slack_modal") {
-                clickedObject.style.display = "none";
-                window.stop();  // This stops the stream so that it doesn't keep running in the background
-                shouldUpdateSnapshots = true; // Restart the snapshot updates
+            if (clickedObject.id == "snapshot_modal") {
+                hideSnapshotModal();
+            }
+            else if(clickedObject.id == "octo_slack_modal") {
+                hideOctoSlackModal();
             }
         }
         /* BUTTONS */
