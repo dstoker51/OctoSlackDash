@@ -51,6 +51,13 @@ printerModule.prototype.createPrinterModule = function(printer) {
     // Show the error image if the connection can't be established
     snapshot.onerror = function() {
         snapshot.src = "img/offline.png";
+        setTimeout(function(){
+            if(shouldUpdateSnapshots) {
+                var printerId = snapshot.id.replace("snapshot_", "");
+                var printer = getPrinterByPrinterId(printerId);
+                snapshot.src = printer.octoprintWebcamSnapshotUrl;
+            }
+        }, 3000);
     };
 
     snapshotWrapper.appendChild(snapshot);
@@ -194,12 +201,12 @@ printerModule.prototype.updatePrinterStatus = function(message) {
     this.updatePrintApproximation(message.data.job.estimatedPrintTime);
     this.updateProgress(message.data.progress);
 
-    if (message.hasOwnProperty("extruder_temps")) {
-        this.updateExtruderTemps(message.extruder_temps);
-
-        if (getPrinterByModuleId(this.id).hasHeatedBed)
-            this.updateBedTemp(message.extruder_temps);
-    }
+    // if (message.hasOwnProperty("extruder_temps")) {
+    //     this.updateExtruderTemps(message.extruder_temps);
+    //
+    //     if (getPrinterByModuleId(this.id).hasHeatedBed)
+    //         this.updateBedTemp(message.extruder_temps);
+    // }
 };
 
 printerModule.prototype.updateSnapshotView = function() {

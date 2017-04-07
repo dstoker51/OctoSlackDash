@@ -1,17 +1,13 @@
 /*jshint esversion: 6 */
 "use strict()";
 
-var printer = function (name, type, numExtruders, hasHeatedBed, nonStandardUrl, apiKey) {
+var printer = function (name, type, nonStandardUrl, apiKey) {
      if (name !== undefined && typeof(name)==='string' &&
-         type !== undefined && typeof(type)==='string' &&
-         numExtruders !== undefined && typeof(numExtruders)==='number' &&
-         hasHeatedBed !== undefined && typeof(hasHeatedBed)==='boolean')
+         type !== undefined && typeof(type)==='string' )
      {
         this.id = printers.length + 1;  //TODO this +1 should go away when the database id is used
         this.name = name;
         this.type = type;
-        this.numExtruders = numExtruders;
-        this.hasHeatedBed = hasHeatedBed;
         if(nonStandardUrl !== undefined)
             this.octoprintUrl = nonStandardUrl;
         else
@@ -56,11 +52,10 @@ var printer = function (name, type, numExtruders, hasHeatedBed, nonStandardUrl, 
         this.id = printers.length;
         this.name = null;
         this.type = null;
-        this.numExtruders = null;
-        this.hasHeatedBed = null;
         this.octoprintUrl = null;
         this.octoprintWebcamLiveUrl = null;
         this.octoprintWebcamSnapshotUrl = null;
+        this.octoPrintClient = null;
         this.printerModule = null;
     }
 
@@ -92,55 +87,3 @@ printer.prototype.onSocketReceiveSlicingProgress = function(printer, message) {
 printer.prototype.onSocketReceivePluginMessage = function(printer, message) {
     // console.log(this.name + " received a plugin message.");
 };
-
-// printer.prototype.requestBatchInfo = function() {
-//     var command_object;
-//     if (this.hasHeatedBed) {
-//         command_object = {
-//             "job_name":null,
-//             "time_remaining":null,
-//             "progress":null,
-//             "bed_temp":null,
-//             "extruder_temps":null
-//         };
-//     }
-//     else {
-//         command_object = {
-//             "job_name":null,
-//             "time_remaining":null,
-//             "progress":null,
-//             "extruder_temps":null
-//         };
-//     }
-//     httpRequest(this, command_object);
-// };
-//
-// printer.prototype.requestProgressInfo = function() {
-//     var command_object = {
-//         "progress":null
-//     };
-//     httpRequest(this, command_object);
-// };
-//
-// printer.prototype.requestTemperatureInfo = function() {
-//     var command_object;
-//     if (this.hasHeatedBed) {
-//         command_object = {
-//             "bed_temp":null,
-//             "extruder_temps":null
-//         };
-//     }
-//     else {
-//         command_object = {
-//             "extruder_temps":null
-//         };
-//     }
-//     httpRequest(this, command_object);
-// };
-//
-// printer.prototype.requestJobName = function() {
-//     var command_object = {
-//         "job_name":null
-//     };
-//     httpRequest(this, command_object);
-// };
