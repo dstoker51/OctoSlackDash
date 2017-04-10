@@ -112,7 +112,7 @@ function displaySnapshotModal(printerId) {
 function hideSnapshotModal() {
     // Stop any large images or streams
     window.stop();
-    
+
     var modalImage = document.getElementById("snapshot_modal_image");
     modalImage.src = "img/offline.png";
 
@@ -127,7 +127,7 @@ function hideSnapshotModal() {
 }
 
 function createSecondLevelObjectEventListeners() {
-    window.onclick = function(event) {
+    $(window).on("click" , function(event) {
         var clickedObject = event.target;
 
         /* ACTIVE SECOND-LEVEL OBJECT */
@@ -193,7 +193,7 @@ function createSecondLevelObjectEventListeners() {
             activeSecondLevelController = clickedObject;
             displaySnapshotModal(Number(printerId));
         }
-    };
+    });
 }
 
 function updateSnapshotViews() {

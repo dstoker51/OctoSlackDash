@@ -4,6 +4,7 @@ var printerModuleCount = 0;
 var numModulesPerRow = 4;
 var snapshotHeightToWidthRatio = 1.3333333; // 440px/330px
 var shouldUpdateSnapshots = true;
+var offlineImageSrc = "img/offline.png";
 
 var printerModule = function(printer) {
     this.DOM = this.createPrinterModule(printer);
@@ -50,7 +51,7 @@ printerModule.prototype.createPrinterModule = function(printer) {
 
     // Show the error image if the connection can't be established
     snapshot.onerror = function() {
-        snapshot.src = "img/offline.png";
+        snapshot.src = offlineImageSrc;
         setTimeout(function(){
             if(shouldUpdateSnapshots) {
                 var printerId = snapshot.id.replace("snapshot_", "");
@@ -200,13 +201,6 @@ printerModule.prototype.updatePrinterStatus = function(message) {
     this.updateJobName(message.data.job.file.name);
     this.updatePrintApproximation(message.data.job.estimatedPrintTime);
     this.updateProgress(message.data.progress);
-
-    // if (message.hasOwnProperty("extruder_temps")) {
-    //     this.updateExtruderTemps(message.extruder_temps);
-    //
-    //     if (getPrinterByModuleId(this.id).hasHeatedBed)
-    //         this.updateBedTemp(message.extruder_temps);
-    // }
 };
 
 printerModule.prototype.updateSnapshotView = function() {
@@ -339,11 +333,11 @@ printerModule.prototype.createSettingsOverlay = function(id) {
     rotateLeftIcon.className = "icon rotate_left_icon";
     rotateLeftIcon.id = "rotate_left_icon_" + id;
     rotateLeftIcon.src = "img/rotate_left.png";
-    rotateLeft.onclick = function() {
+    $(rotateLeft).on("click", function() {
         var id = this.id.replace("rotate_left_link_", "");
         var printer = getPrinterByModuleId(id);
         printer.printerModule.rotateSnapshotLeft90Deg();
-    };
+    });
 
     var rotateRight = document.createElement("A");
     rotateRight.className = "icon rotate_right_link";
@@ -352,11 +346,11 @@ printerModule.prototype.createSettingsOverlay = function(id) {
     rotateRightIcon.className = "icon rotate_right_icon";
     rotateRightIcon.id = "rotate_right_icon_" + id;
     rotateRightIcon.src = "img/rotate_right.png";
-    rotateRight.onclick = function() {
+    $(rotateRight).on("click", function() {
         var id = this.id.replace("rotate_right_link_", "");
         var printer = getPrinterByModuleId(id);
         printer.printerModule.rotateSnapshotRight90Deg();
-    };
+    });
 
     // Structure them
     rotateLeft.appendChild(rotateLeftIcon);

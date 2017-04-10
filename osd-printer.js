@@ -15,7 +15,6 @@ var printer = function (name, type, nonStandardUrl, apiKey) {
         this.octoprintWebcamLiveUrl = this.octoprintUrl + "/webcam/?action=stream";
         this.octoprintWebcamSnapshotUrl = this.octoprintUrl + "/webcam/?action=snapshot";
         this.printerModule = new printerModule(this);
-        //var apiKey = //TODO Get from database
         this.octoPrintClient = new OctoPrintClient({baseurl: this.octoprintUrl, apikey: apiKey});
         this.octoPrintClient.socket.connect();  // Start the socket
 
