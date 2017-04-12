@@ -30,60 +30,11 @@
         </div><!--./shell-->
 
         <script>
-            var blackMamba = new printer("Black Mamba", "Rostock Max v2", undefined, "octopi1key");
-            var mobyDick = new printer("Moby Dick", "Rostock Max v2", undefined, "0200628F557F4FF8B6FE08697140284F");
-            var printrbot = new printer("Printrbot", "PrintrBot Simple Metal", undefined, "55909A86E92C49B6BF8FBAB5C61726C3");
-            var stu = new printer("Stu i3", "Wanhao Duplicator i3", undefined, "octopi4apikey");
-
             createNavBar();
             createOctoSlackModal();
             createSnapshotModal();
             createSecondLevelObjectEventListeners();
-
-            // var socket = new WebSocket("ws://155.97.12.120:5001/echo");
-            //
-            // socket.onopen = function() {
-            //     socket.send("Darin send.");
-            // };
-            //
-            // socket.onmessage = function(msg) {
-            //     document.getElementById("test_area").innerHTML = JSON.stringify(msg);
-            // };
-
-            if ("WebSocket" in window)
-            {
-            //    alert("WebSocket is supported by your Browser!");
-
-               // Let us open a web socket
-               var ws = new WebSocket("ws://155.97.12.120:5001/listen");
-
-               ws.onopen = function()
-               {
-                  // Web Socket is connected, send data using send()
-                  ws.send("Message to send. What's up? Another test.");
-                //   alert("Message is sent...");
-               };
-
-               ws.onmessage = function (evt)
-               {
-                  var received_msg = evt.data;
-                //   alert("Message is received...");
-                  document.getElementById("test_area").innerHTML = JSON.stringify(received_msg);
-               };
-
-               ws.onclose = function()
-               {
-                  // websocket is closed.
-                //   alert("Connection is closed...");
-               };
-            }
-
-            else
-            {
-               // The browser doesn't support WebSocket
-               alert("WebSocket NOT supported by your Browser!");
-            }
-
+            startWebSocket("http://155.97.12.120:8081/listen");
         </script>
     </body>
 </html>

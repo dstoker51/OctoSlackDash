@@ -1,5 +1,5 @@
 .octo_slack_modal {
-    cursor:pointer;
+    cursor:pointer; /* Causes touches to count as clicks on this item for mobile */
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
@@ -40,7 +40,7 @@
 }
 
 .snapshot_modal {
-    cursor:pointer;
+    cursor:pointer; /* Causes touches to count as clicks on this item for mobile */
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */

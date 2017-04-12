@@ -197,10 +197,10 @@ printerModule.prototype.updateExtruderTemps = function(value) {
 };
 
 printerModule.prototype.updatePrinterStatus = function(message) {
-    this.updateState(message.data.state);
-    this.updateJobName(message.data.job.file.name);
-    this.updatePrintApproximation(message.data.job.estimatedPrintTime);
-    this.updateProgress(message.data.progress);
+    this.updateState(message.state);
+    this.updateJobName(message.job.file.name);
+    this.updatePrintApproximation(message.job.estimatedPrintTime);
+    this.updateProgress(message.progress);
 };
 
 printerModule.prototype.updateSnapshotView = function() {

@@ -129,6 +129,8 @@ function hideSnapshotModal() {
 function createSecondLevelObjectEventListeners() {
     $(window).on("click" , function(event) {
         var clickedObject = event.target;
+        var printerId;  // Needs to be defined here for hoisting. Stupid JSHint...
+        var overlay;    // Needs to be defined here for hoisting. Stupid JSHint...
 
         /* ACTIVE SECOND-LEVEL OBJECT */
         if (activeSecondLevelObject !== null &&
@@ -149,8 +151,8 @@ function createSecondLevelObjectEventListeners() {
         }
         /* BUTTONS */
         else if (clickedObject.className.includes("settings_icon")) {
-            var printerId = event.target.id.replace("settings_icon", "");
-            var overlay = document.getElementById("settings_overlay" + printerId);
+            printerId = event.target.id.replace("settings_icon", "");
+            overlay = document.getElementById("settings_overlay" + printerId);
 
             if (clickedObject === activeSecondLevelController) {
                 overlay.style.display = "none";
@@ -164,8 +166,8 @@ function createSecondLevelObjectEventListeners() {
             }
         }
         else if (clickedObject.className.includes("info_icon")) {
-            var printerId = event.target.id.replace("info_icon", "");
-            var overlay = document.getElementById("info_overlay" + printerId);
+            printerId = event.target.id.replace("info_icon", "");
+            overlay = document.getElementById("info_overlay" + printerId);
 
             if (clickedObject === activeSecondLevelController) {
                 overlay.style.display = "none";
@@ -182,13 +184,13 @@ function createSecondLevelObjectEventListeners() {
         // This is a button, but the controller is unclickable while it is up.
         // It counts as a modal
         else if (clickedObject.className.includes("printer_icon")) {
-            var printerId = event.target.id.replace("printer_icon_", "");
+            printerId = event.target.id.replace("printer_icon_", "");
             activeSecondLevelObject = document.getElementById("octo_slack_modal_content");
             activeSecondLevelController = clickedObject;
             displayOctoSlackModal(Number(printerId));
         }
         else if (clickedObject.className.includes("snapshot")) {
-            var printerId = event.target.id.replace("snapshot_", "");
+            printerId = event.target.id.replace("snapshot_", "");
             activeSecondLevelObject = document.getElementById("snapshot_modal_content");
             activeSecondLevelController = clickedObject;
             displaySnapshotModal(Number(printerId));
@@ -201,6 +203,83 @@ function updateSnapshotViews() {
         var printerModule = printers[printer].printerModule;
         printerModule.updateSnapshotView();
     }
+}
+
+function startWebSocket(url) {
+    // Let's open a web socket
+    var ws = new SockJS(url);
+
+    ws.onopen = function(event) {
+        // Web Socket is connected, send data using send()
+        //   ws.send("What's up?");
+    };
+
+    ws.onmessage = function (event) {
+        var payload = JSON.parse(event.data);
+        var message = payload.message;
+        var numPrintersToAdd = payload.num_printers;
+        var printerId;
+        var printerObject;
+
+        // Printer setup occurs on server connect
+        if(payload.message_type == "on_server_connect") {
+            for (var printerDef in message) {
+                // Create new printer
+                printerId = message[printerDef].printer_id;
+                var angle = message[printerDef].camera_rotation;
+                var type = message[printerDef].printer_type;
+                var name = message[printerDef].printer_name;
+                var url = message[printerDef].url;
+                printerObject = new printer(printerId, name, type, url);
+
+                // Rotate the snapshot to the angle defined in the database
+                printerObject.printerModule.rotateSnapshotToAngle(angle);
+            }
+        }
+        //Printer updates occur on all other types of messages
+        //connected: apikey, version. branch, display_version, plugin_hash, config_hash
+        else if(payload.message_type == "connected") {
+            printerObject = getPrinterByPrinterId(payload.printer_id);
+            printerObject.onSocketConnect(message);
+        }
+        // current: state, job, progress, currentZ, offsets, temps, logs, messages
+        else if(payload.message_type == "current") {
+            printerObject = getPrinterByPrinterId(payload.printer_id);
+            printerObject.onSocketReceiveCurrent(message);
+        }
+        // history: state, job, progress, currentZ, offsets, temps, logs, messages
+        else if(payload.message_type == "history") {
+            printerObject = getPrinterByPrinterId(payload.printer_id);
+            printerObject.onSocketReceiveHistory(message);
+        }
+        // event: type, payload
+        else if(payload.message_type == "event") {
+            printerObject = getPrinterByPrinterId(payload.printer_id);
+            printerObject.onSocketReceiveEvent(message);
+        }
+        // slicingProgress: slicer, source_location, source_path, dest_location, dest_path, progress
+        else if(payload.message_type == "slicingProgress") {
+            printerObject = getPrinterByPrinterId(payload.printer_id);
+            printerObject.onSocketReceiveSlicingProgress(message);
+        }
+        // plugin: messages generated by plugins. Plugin-specific.
+        else if(payload.message_type == "plugin") {
+            printerObject = getPrinterByPrinterId(payload.printer_id);
+            printerObject.onSocketReceivePluginMessage(message);
+        }
+        else {
+            // Unknown payload type
+            console.error("Unknown payload type detected. Check Octoprint docs for info on new type.");
+        }
+
+        // TODO Remove this line after testing
+        // document.getElementById("test_area").innerHTML = JSON.stringify(message);
+    };
+
+    ws.onclose = function(event) {
+        // websocket is closed.
+        // alert("Socket connection is closed. Please refresh the page.");
+    };
 }
 
 // http://stackoverflow.com/questions/6312993/javascript-seconds-to-time-string-with-format-hhmmss
