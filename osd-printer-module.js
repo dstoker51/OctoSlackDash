@@ -381,8 +381,3 @@ printerModule.prototype.rotateSnapshotRight90Deg = function() {
     image.title = newAngle; /* Store the rotation */
     image.style.webkitTransform = "rotate("+newAngle+"deg) scale("+snapshotHeightToWidthRatio+")";
 };
-
-printerModule.prototype.rotateSnapshotToAngle = function(angle) {
-    var image = document.getElementById("snapshot_" + this.id);
-    image.style.webkitTransform = "rotate("+angle+"deg)";
-};

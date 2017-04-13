@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 "use strict()";
 
 /* The second level object is any object like a modal or overlay that is "above"
@@ -8,6 +9,11 @@
  */
 var activeSecondLevelObject = null;
 var activeSecondLevelController = null;
+var socket;
+const numTimesToRetrySocketBeforeErrorBackup = 12;
+var numTimesToRetrySocketBeforeError = numTimesToRetrySocketBeforeErrorBackup;
+var timeout;
+const timeoutInterval = 5000; //ms
 
 // Set snapshot update interval
 window.setInterval(updateSnapshotViews, 3000);
@@ -207,14 +213,16 @@ function updateSnapshotViews() {
 
 function startWebSocket(url) {
     // Let's open a web socket
-    var ws = new SockJS(url);
+    socket = new SockJS(url);
 
-    ws.onopen = function(event) {
-        // Web Socket is connected, send data using send()
-        //   ws.send("What's up?");
+    socket.onopen = function(event) {
+        // Web Socket is connected
+        console.log("Server socket connect succesful.");
+        numTimesToRetrySocketBeforeError = numTimesToRetrySocketBeforeErrorBackup;
     };
 
-    ws.onmessage = function (event) {
+    socket.onmessage = function (event) {
+        // Web Socket received message
         var payload = JSON.parse(event.data);
         var message = payload.message;
         var numPrintersToAdd = payload.num_printers;
@@ -226,14 +234,22 @@ function startWebSocket(url) {
             for (var printerDef in message) {
                 // Create new printer
                 printerId = message[printerDef].printer_id;
-                var angle = message[printerDef].camera_rotation;
                 var type = message[printerDef].printer_type;
                 var name = message[printerDef].printer_name;
                 var url = message[printerDef].url;
                 printerObject = new printer(printerId, name, type, url);
 
                 // Rotate the snapshot to the angle defined in the database
-                printerObject.printerModule.rotateSnapshotToAngle(angle);
+                var angle = message[printerDef].camera_rotation % 360;  // Get it in standard angle range
+                var timesToRotate = Math.floor(angle / 90); // Number of times to rotate by 90
+                for(var rotationCount=0; rotationCount<timesToRotate; rotationCount++) {
+                    if(angle > 0) {
+                        printerObject.printerModule.rotateSnapshotRight90Deg(angle);
+                    }
+                    else {
+                        printerObject.printerModule.rotateSnapshotLeft90Deg(angle);
+                    }
+                }
             }
         }
         //Printer updates occur on all other types of messages
@@ -276,10 +292,21 @@ function startWebSocket(url) {
         // document.getElementById("test_area").innerHTML = JSON.stringify(message);
     };
 
-    ws.onclose = function(event) {
-        // websocket is closed.
-        // alert("Socket connection is closed. Please refresh the page.");
+    socket.onclose = function(event) {
+        // Web Socket is closed
+        if(numTimesToRetrySocketBeforeError > 0) {
+            console.error("Socket connection closed. Trying to reconnect.");
+            timeout = setTimeout(reconnectSocket(), timeoutInterval);
+        }
+        else {
+            console.error("Socket connection could not be reestablished. Please refresh the page.");
+        }
     };
+}
+
+function reconnectSocket() {
+    socket = new SockJS(url);
+    numTimesToRetrySocketBeforeError = numTimesToRetrySocketBeforeError - 1;
 }
 
 // http://stackoverflow.com/questions/6312993/javascript-seconds-to-time-string-with-format-hhmmss
