@@ -139,7 +139,7 @@ printerModule.prototype.updateJobName = function(value) {
 printerModule.prototype.updatePrintApproximation = function(value) {
     if(value !== null) {
         var textArea = document.getElementById("approx_total_print_time_value_" + Number(this.id));
-        textArea.innerHTML = String(value).toHHMM();
+        textArea.innerHTML = String(value).toHHMMSS();
     }
 };
 
@@ -149,11 +149,11 @@ printerModule.prototype.updateProgress = function(value) {
     // Update status overlay views
     if (value.printTime !== null) {
         textArea = document.getElementById("print_time_value_" + Number(this.id));
-        textArea.innerHTML = String(value.printTime).toHHMM();
+        textArea.innerHTML = String(value.printTime).toHHMMSS();
     }
     if (value.printTimeLeft !== null) {
         textArea = document.getElementById("print_time_left_value_" + Number(this.id));
-        textArea.innerHTML = String(value.printTimeLeft).toHHMM();
+        textArea.innerHTML = String(value.printTimeLeft).toHHMMSS();
     }
 
     // Update progress bar

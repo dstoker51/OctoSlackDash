@@ -4,7 +4,8 @@ var printers = [];
 
 // Global functions
 function addPrinter(printer) {
-    printers.push(printer);
+    if(!printerAlreadyExists(printer))
+        printers.push(printer);
 }
 
 function deletePrinter(printer) {
@@ -28,4 +29,13 @@ function getPrinterByModuleId(id) {
         return printers[id];
     else
         return null;
+}
+
+function printerAlreadyExists(printer) {
+    for(var printerNum=0; printerNum<printers.length; printerNum++) {
+        if(printers[printerNum].id == printer.id){
+            return true;
+        }
+    }
+    return false;
 }
