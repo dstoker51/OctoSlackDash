@@ -232,8 +232,13 @@ function startWebSocket(url) {
         // Printer setup occurs on server connect
         if(payload.message_type == "on_server_connect") {
             for (var printerDef in message) {
-                // Create new printer
+                // Check if printer already exists (happens on socket reconnect)
                 printerId = message[printerDef].printer_id;
+                if(getPrinterByPrinterId(printerId) !== null){
+                    return;
+                }
+
+                // Else create new printer
                 var type = message[printerDef].printer_type;
                 var name = message[printerDef].printer_name;
                 var url = message[printerDef].url;

@@ -4,8 +4,7 @@ var printers = [];
 
 // Global functions
 function addPrinter(printer) {
-    if(!printerAlreadyExists(printer))
-        printers.push(printer);
+    printers.push(printer);
 }
 
 function deletePrinter(printer) {
@@ -31,11 +30,11 @@ function getPrinterByModuleId(id) {
         return null;
 }
 
-function printerAlreadyExists(printer) {
-    for(var printerNum=0; printerNum<printers.length; printerNum++) {
-        if(printers[printerNum].id == printer.id){
-            return true;
-        }
-    }
-    return false;
-}
+// function printerAlreadyExists(id) {
+//     for(var printerNum=0; printerNum<printers.length; printerNum++) {
+//         if(printers[printerNum].id == printer.id){
+//             return true;
+//         }
+//     }
+//     return false;
+// }

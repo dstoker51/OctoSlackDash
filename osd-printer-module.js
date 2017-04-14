@@ -122,6 +122,10 @@ printerModule.prototype.createPrinterModule = function(printer) {
     return module;
 };
 
+printerModule.prototype.addPrinterModuleToDOM = function() {
+
+};
+
 printerModule.prototype.updateProgressBar = function(value) {
     var progressBar = document.getElementById("progress_bar_" + Number(this.id));
     $(progressBar).attr("aria-valuenow", "" + value + "%");
