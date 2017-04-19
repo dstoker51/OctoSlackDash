@@ -341,6 +341,13 @@ printerModule.prototype.createSettingsOverlay = function(id) {
         var id = this.id.replace("rotate_left_link_", "");
         var printer = getPrinterByModuleId(id);
         printer.printerModule.rotateSnapshotLeft90Deg();
+
+        // Get the rotation angle stored in the snapshot title tag
+        var image = document.getElementById("snapshot_" + id);
+        var angle = Number(image.title);
+
+        // Update the server database
+        sendRotationUpdateToServer(id, angle);
     });
 
     var rotateRight = document.createElement("A");
@@ -354,6 +361,13 @@ printerModule.prototype.createSettingsOverlay = function(id) {
         var id = this.id.replace("rotate_right_link_", "");
         var printer = getPrinterByModuleId(id);
         printer.printerModule.rotateSnapshotRight90Deg();
+
+        // Get the rotation angle stored in the snapshot title tag
+        var image = document.getElementById("snapshot_" + id);
+        var angle = Number(image.title);
+
+        // Update the server database
+        sendRotationUpdateToServer(id, angle);
     });
 
     // Structure them
@@ -375,6 +389,9 @@ printerModule.prototype.rotateSnapshotLeft90Deg = function() {
 
     // Perform the rotation
     image.style.webkitTransform = "rotate("+newAngle+"deg) scale("+snapshotHeightToWidthRatio+")";
+
+    // Update the server database
+    sendRotationUpdateToServer(this.id, newAngle);
 };
 
 printerModule.prototype.rotateSnapshotRight90Deg = function() {
@@ -383,5 +400,15 @@ printerModule.prototype.rotateSnapshotRight90Deg = function() {
     var oldAngle = Number(image.title);
     var newAngle = (oldAngle + 90) % 360;
     image.title = newAngle; /* Store the rotation */
+
+    // Perform the rotation
     image.style.webkitTransform = "rotate("+newAngle+"deg) scale("+snapshotHeightToWidthRatio+")";
 };
+
+function sendRotationUpdateToServer(printerId, angle) {
+    var message = { "message_type":"rotation_update",
+                    "message": angle,
+                    "printer_id": printerId };
+    message = JSON.stringify(message);
+    socket.send(message);
+}

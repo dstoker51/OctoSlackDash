@@ -30,11 +30,10 @@ function getPrinterByModuleId(id) {
         return null;
 }
 
-// function printerAlreadyExists(id) {
-//     for(var printerNum=0; printerNum<printers.length; printerNum++) {
-//         if(printers[printerNum].id == printer.id){
-//             return true;
-//         }
-//     }
-//     return false;
-// }
+// Jump through the printer array and update the snapshot view for each
+function updateSnapshotViews() {
+    for (var printer in printers) {
+        var printerModule = printers[printer].printerModule;
+        printerModule.updateSnapshotView();
+    }
+}

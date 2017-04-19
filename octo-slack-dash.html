@@ -9,7 +9,8 @@
         <script src="osd-scripts.js"></script>
         <script src="osd-printers.js"></script>
         <script src="osd-printer.js"></script>
-        <script src="osd-http-request-wrapper.js"></script>
+        <script src="osd-sockets.js"></script>
+        <script src="osd-modals.js"></script>
         <script src="osd-printer-module.js"></script>
         <script src="sockjs.min.js"></script>
         <script src="packed-client.js"></script>
@@ -21,7 +22,6 @@
         <link href="osd-css-printer-modules.css" rel="stylesheet">
     </head>
     <body>
-        <div class="test_area" id="test_area"></div>
         <div class="nav_bar" id="nav_bar"></div>
         <div class="octo_slack_modal" id="octo_slack_modal"></div>
         <div class="snapshot_modal" id="snapshot_modal"></div>
@@ -35,6 +35,7 @@
             createSnapshotModal();
             createSecondLevelObjectEventListeners();
             startWebSocket("http://155.97.12.120:8080/sockJS");
+            window.setInterval(updateSnapshotViews, 3000);
         </script>
     </body>
 </html>
