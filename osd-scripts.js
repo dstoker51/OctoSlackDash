@@ -17,6 +17,10 @@ function createNavBar() {
     navBar.appendChild(heroLogo);
 }
 
+// Snapshot update interval
+window.setInterval(updateSnapshotViews, 3000);
+
+// String override function to display HHMMSS
 // http://stackoverflow.com/questions/6312993/javascript-seconds-to-time-string-with-format-hhmmss
 String.prototype.toHHMMSS = function() {
     var sec_num = parseInt(this, 10); // don't forget the second param
@@ -30,6 +34,7 @@ String.prototype.toHHMMSS = function() {
     return hours+':'+minutes+':'+seconds;
 };
 
+// String override function to display HHMM
 String.prototype.toHHMM = function() {
     var sec_num = parseInt(this, 10); // don't forget the second param
     var hours   = Math.floor(sec_num / 3600);

@@ -33,7 +33,7 @@ printer.prototype.onSocketConnect = function(message) {
     console.log(this.name + " socket connected successfully.");
 };
 
-printer.prototype.onSocketReceiveHearbeat = function(message) {
+printer.prototype.onSocketReceiveHeartbeat = function(message) {
     // console.log(this.name + " heartbeat.");
 };
 

@@ -2,7 +2,7 @@
 "use strict()";
 
 var socket;
-const numTimesToRetrySocketBeforeError = 10000;
+const numTimesToRetrySocketBeforeError = 100000;
 var timesRetried = 0;
 var timeout;
 const timeoutInterval = 6000; //ms
@@ -35,7 +35,6 @@ function startWebSocket(url) {
                 if(getPrinterByPrinterId(printerId) !== null){
                     return;
                 }
-
                 // Else create new printer
                 var type = message[printerDef].printer_type;
                 var name = message[printerDef].printer_name;
@@ -52,6 +51,17 @@ function startWebSocket(url) {
                     else {
                         printerObject.printerModule.rotateSnapshotLeft90Deg(angle);
                     }
+                }
+
+                // Flip the image as required
+                var horizFlip = message[printerDef].horizontal_flip;
+                var vertFlip = message[printerDef].vertical_flip;
+
+                if(horizFlip == "True"){
+                    printerObject.printerModule.flipSnapshotHorizontally();
+                }
+                if(vertFlip == "True") {
+                    printerObject.printerModule.flipSnapshotVertically();
                 }
             }
         }

@@ -87,7 +87,8 @@ function hideOctoSlackModal() {
 function displaySnapshotModal(id) {
     // Rotate the container to match the set rotation of the static snapshot
     var snapshot = document.getElementById("snapshot_" + id);
-    var angle = snapshot.title; //Title contains angle
+
+    var angle = snapshot.getAttribute("data-rotation-angle"); // img tag contains angle
     var modalContent = document.getElementById("snapshot_modal_content");
     modalContent.style.webkitTransform = "rotate("+angle+"deg)";
 

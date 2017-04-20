@@ -6,11 +6,16 @@ var snapshotHeightToWidthRatio = 1.3333333; // 440px/330px
 var shouldUpdateSnapshots = true;
 var offlineImageSrc = "img/offline.png";
 
+// Instantiate the printer module
 var printerModule = function(printer) {
     this.DOM = this.createPrinterModule(printer);
     this.id = this.DOM.id;
 };
 
+// This method is essentially a constructor for a printer module DOM object.
+// The id for the module is generated here, so you can't get the id of the
+// module until after running this function. This function also creates its own
+// rows, which is a TODO since that is a little weird.
 printerModule.prototype.createPrinterModule = function(printer) {
     // Create a new row if needed
     if (printerModuleCount % numModulesPerRow === 0) {
@@ -22,7 +27,7 @@ printerModule.prototype.createPrinterModule = function(printer) {
     //Update module count
     printerModuleCount++;
 
-    // Create elements
+    // Create module DOM elements
     var col = document.createElement("DIV");
     col.className = "col-xs-12 col-sm-6 col-md-6 col-lg-3 col-xl-3";
 
@@ -47,7 +52,9 @@ printerModule.prototype.createPrinterModule = function(printer) {
     snapshot.id = "snapshot_" + Number(module.id);
     snapshot.src = printer.octoprintWebcamSnapshotUrl;
     snapshot.alt = printerName.innerHTML;
-    snapshot.title = "0";   // Used for rotation calculation
+    snapshot.setAttribute("data-rotation-angle", "0");
+    snapshot.setAttribute("data-horizontal-flip", "False"); // Capitalized because of database
+    snapshot.setAttribute("data-vertical-flip", "False");   // Capitalized because of database
 
     // Show the error image if the connection can't be established
     snapshot.onerror = function() {
@@ -122,10 +129,6 @@ printerModule.prototype.createPrinterModule = function(printer) {
     return module;
 };
 
-printerModule.prototype.addPrinterModuleToDOM = function() {
-
-};
-
 printerModule.prototype.updateProgressBar = function(value) {
     var progressBar = document.getElementById("progress_bar_" + Number(this.id));
     $(progressBar).attr("aria-valuenow", "" + value + "%");
@@ -193,11 +196,11 @@ printerModule.prototype.updateState = function(state) {
 };
 
 printerModule.prototype.updateBedTemp = function(value) {
-
+    // TODO
 };
 
 printerModule.prototype.updateExtruderTemps = function(value) {
-
+    // TODO
 };
 
 printerModule.prototype.updatePrinterStatus = function(message) {
@@ -342,9 +345,9 @@ printerModule.prototype.createSettingsOverlay = function(id) {
         var printer = getPrinterByModuleId(id);
         printer.printerModule.rotateSnapshotLeft90Deg();
 
-        // Get the rotation angle stored in the snapshot title tag
-        var image = document.getElementById("snapshot_" + id);
-        var angle = Number(image.title);
+        // Get the rotation angle stored in the snapshot img tag
+        // var image = document.getElementById("snapshot_" + id);
+        // angle = Number(image.getAttribute("data-rotation-angle"));
 
         // Update the server database
         // sendRotationUpdateToServer(id, angle);
@@ -362,9 +365,9 @@ printerModule.prototype.createSettingsOverlay = function(id) {
         var printer = getPrinterByModuleId(id);
         printer.printerModule.rotateSnapshotRight90Deg();
 
-        // Get the rotation angle stored in the snapshot title tag
-        var image = document.getElementById("snapshot_" + id);
-        var angle = Number(image.title);
+        // Get the rotation angle stored in the snapshot img tag
+        // var image = document.getElementById("snapshot_" + id);
+        // angle = Number(image.getAttribute("data-rotation-angle"));
 
         // Update the server database
         // sendRotationUpdateToServer(id, angle);
@@ -381,40 +384,57 @@ printerModule.prototype.createSettingsOverlay = function(id) {
 };
 
 printerModule.prototype.rotateSnapshotLeft90Deg = function() {
-    // Get the rotation angle stored in the snapshot title tag
+    // Get the rotation angle stored in the snapshot img tag
     var image = document.getElementById("snapshot_" + this.id);
-    var oldAngle = Number(image.title);
+    var oldAngle = Number(image.getAttribute("data-rotation-angle"));
     var newAngle = (oldAngle - 90) % 360;
-    image.title = newAngle; /* Store the rotation */
+    image.setAttribute("data-rotation-angle", newAngle); /* Store the rotation */
 
     // Perform the rotation
     image.style.webkitTransform = "rotate("+newAngle+"deg) scale("+snapshotHeightToWidthRatio+")";
-
-    // Update the server database
-    sendRotationUpdateToServer(this.id, newAngle);
 };
 
 printerModule.prototype.rotateSnapshotRight90Deg = function() {
-    // Get the rotation angle stored in the snapshot title tag
+    // Get the rotation angle stored in the snapshot img tag
     var image = document.getElementById("snapshot_" + this.id);
-    var oldAngle = Number(image.title);
+    var oldAngle = Number(image.getAttribute("data-rotation-angle"));
     var newAngle = (oldAngle + 90) % 360;
-    image.title = newAngle; /* Store the rotation */
+    image.setAttribute("data-rotation-angle", newAngle); /* Store the rotation */
 
     // Perform the rotation
     image.style.webkitTransform = "rotate("+newAngle+"deg) scale("+snapshotHeightToWidthRatio+")";
 };
 
 printerModule.prototype.flipSnapshotHorizontally = function() {
-    //TODO Storing rotation angle in the title of the image right now.
-    // Should create another storage area in the object and store angles and
-    // flips there. Otherwise the snapshot modal won't reflect the changes.
+    var image = document.getElementById("snapshot_" + this.id);
+
+    // Toggle the flip state
+    var flipped = image.getAttribute("data-horizontal-flip");
+    if(flipped == "True"){
+        image.setAttribute("data-horizontal-flip", "False");
+    }
+    else {
+        image.setAttribute("data-horizontal-flip", "True");
+    }
+
+    // Perform the flip
+    image.style.webkitTransform = "rotateY(180deg)";
 };
 
 printerModule.prototype.flipSnapshotVertically = function() {
-    //TODO Storing rotation angle in the title of the image right now.
-    // Should create another storage area in the object and store angles and
-    // flips there. Otherwise the snapshot modal won't reflect the changes.
+    var image = document.getElementById("snapshot_" + this.id);
+
+    // Toggle the flip state
+    var flipped = image.getAttribute("data-vertical-flip");
+    if(flipped == "True"){
+        image.setAttribute("data-vertical-flip", "False");
+    }
+    else {
+        image.setAttribute("data-vertical-flip", "True");
+    }
+
+    // Perform the flip
+    image.style.webkitTransform = "rotateX(180deg)";
 };
 
 function sendRotationUpdateToServer(printerId, angle) {
