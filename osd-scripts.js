@@ -17,9 +17,6 @@ function createNavBar() {
     navBar.appendChild(heroLogo);
 }
 
-// Snapshot update interval
-window.setInterval(updateSnapshotViews, 3000);
-
 // String override function to display HHMMSS
 // http://stackoverflow.com/questions/6312993/javascript-seconds-to-time-string-with-format-hhmmss
 String.prototype.toHHMMSS = function() {
