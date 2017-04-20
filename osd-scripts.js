@@ -2,7 +2,7 @@
 "use strict()";
 
 /*
- * This file contains misc. functions
+ * This file contains misc functions
  */
 
 // Create the navigation bar on the website

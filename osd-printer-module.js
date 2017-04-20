@@ -347,7 +347,7 @@ printerModule.prototype.createSettingsOverlay = function(id) {
         var angle = Number(image.title);
 
         // Update the server database
-        sendRotationUpdateToServer(id, angle);
+        // sendRotationUpdateToServer(id, angle);
     });
 
     var rotateRight = document.createElement("A");
@@ -367,7 +367,7 @@ printerModule.prototype.createSettingsOverlay = function(id) {
         var angle = Number(image.title);
 
         // Update the server database
-        sendRotationUpdateToServer(id, angle);
+        // sendRotationUpdateToServer(id, angle);
     });
 
     // Structure them
@@ -403,6 +403,18 @@ printerModule.prototype.rotateSnapshotRight90Deg = function() {
 
     // Perform the rotation
     image.style.webkitTransform = "rotate("+newAngle+"deg) scale("+snapshotHeightToWidthRatio+")";
+};
+
+printerModule.prototype.flipSnapshotHorizontally = function() {
+    //TODO Storing rotation angle in the title of the image right now.
+    // Should create another storage area in the object and store angles and
+    // flips there. Otherwise the snapshot modal won't reflect the changes.
+};
+
+printerModule.prototype.flipSnapshotVertically = function() {
+    //TODO Storing rotation angle in the title of the image right now.
+    // Should create another storage area in the object and store angles and
+    // flips there. Otherwise the snapshot modal won't reflect the changes.
 };
 
 function sendRotationUpdateToServer(printerId, angle) {

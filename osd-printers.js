@@ -1,12 +1,16 @@
 "use strict()";
 
+// Global printer list. Contains all printer instances.
+// TODO Could make this a "class" like printer is, with prototype functions.
 var printers = [];
 
-// Global functions
+
+// Add a printer object to the printers list
 function addPrinter(printer) {
     printers.push(printer);
 }
 
+// Delete a printer from the printers list
 function deletePrinter(printer) {
     for (i=0; i<printers.length; i++) {
         if (printers[i].id == printer.id)
@@ -14,6 +18,7 @@ function deletePrinter(printer) {
     }
 }
 
+// Get printer from the printerId
 function getPrinterByPrinterId(id) {
     for (var i = 0; i < printers.length; i++) {
         if (printers[i].id == Number(id))
@@ -22,6 +27,7 @@ function getPrinterByPrinterId(id) {
     return null;
 }
 
+// Get printer from the moduleId
 function getPrinterByModuleId(id) {
     id = Number(id) - 1;
     if(printers.length > Number(id))

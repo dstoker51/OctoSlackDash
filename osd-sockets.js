@@ -55,6 +55,13 @@ function startWebSocket(url) {
                 }
             }
         }
+        // Heartbeat from the printer
+        else if(payload.message_type == "heartbeat") {
+            printerObject = getPrinterByPrinterId(payload.printer_id);
+            if(printerObject !== null && printerObject !== undefined) {
+                printerObject.onSocketReceiveHeartbeat(message);
+            }
+        }
         //Printer updates occur on all other types of messages
         //connected: apikey, version. branch, display_version, plugin_hash, config_hash
         else if(payload.message_type == "connected") {

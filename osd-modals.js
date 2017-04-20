@@ -45,9 +45,9 @@ function createSnapshotModal() {
 }
 
 // Populates the modal and displays it
-function displayOctoSlackModal(printerId) {
+function displayOctoSlackModal(id) {
     // Set the modal iframe source to be the appropriate URL
-    var printer = getPrinterByPrinterId(printerId);
+    var printer = getPrinterByModuleId(id);
     var modalIframe = document.getElementById("octo_slack_modal_iframe");
     modalIframe.src = printer.octoprintUrl;
 
@@ -84,15 +84,15 @@ function hideOctoSlackModal() {
 }
 
 // Populates the modal and shows it
-function displaySnapshotModal(printerId) {
+function displaySnapshotModal(id) {
     // Rotate the container to match the set rotation of the static snapshot
-    var snapshot = document.getElementById("snapshot_" + printerId);
+    var snapshot = document.getElementById("snapshot_" + id);
     var angle = snapshot.title; //Title contains angle
     var modalContent = document.getElementById("snapshot_modal_content");
     modalContent.style.webkitTransform = "rotate("+angle+"deg)";
 
     // Set the modal image source to be the appropriate webcam feed
-    var printer = getPrinterByPrinterId(printerId);
+    var printer = getPrinterByModuleId(id);
     var modalImage = document.getElementById("snapshot_modal_image");
     modalImage.src = printer.octoprintWebcamLiveUrl;
 
